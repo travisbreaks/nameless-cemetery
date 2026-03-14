@@ -1,0 +1,282 @@
+---
+const currentPath = Astro.url.pathname
+const navItems = [
+  { label: 'Home', href: '/' },
+  { label: 'History', href: '/history/' },
+  { label: 'Stories', href: '/stories/' },
+  { label: 'How to Help', href: '/help/' },
+]
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="header-brand">
+      <button class="logo-trigger" aria-label="View logo">
+        <img src="/images/logo.png" alt="Nameless Cemetery logo" class="header-logo" />
+      </button>
+      <span class="header-title">Nameless Cemetery</span>
+    </div>
+
+    <button class="mobile-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="hamburger"></span>
+    </button>
+
+    <nav class="header-nav" aria-label="Main navigation">
+      {navItems.map(item => (
+        <a
+          href={item.href}
+          class:list={['nav-link', { active: currentPath === item.href || currentPath === item.href.slice(0, -1) }]}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<!-- Dim backdrop (behind logo, above everything else) -->
+<div class="logo-backdrop" aria-hidden="true"></div>
+
+<style>
+  .site-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--sandstone);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-block: var(--space-md);
+    gap: var(--space-sm);
+  }
+
+  .header-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .logo-trigger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    line-height: 0;
+    position: relative;
+    z-index: 101;
+  }
+
+  .header-logo {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+    background: transparent;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-origin: center center;
+  }
+
+  .logo-trigger:hover .header-logo {
+    transform: scale(1.05);
+  }
+
+  /* Expanded state is set via inline style by JS for dynamic centering */
+
+  .logo-trigger.expanded {
+    z-index: 9999;
+    cursor: pointer;
+  }
+
+  .header-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #2E2A27;
+    transition: color var(--duration) var(--ease),
+                opacity 0.4s cubic-bezier(0.45, 0, 0.55, 1);
+  }
+
+  /* Fade out title when logo is expanded */
+  .header-brand.logo-active .header-title {
+    opacity: 0;
+  }
+
+  .header-nav {
+    display: flex;
+    gap: var(--space-xl);
+  }
+
+  .nav-link {
+    font-size: var(--text-base);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    color: var(--patina);
+    padding-block: var(--space-xs);
+    border-bottom: 2px solid transparent;
+    transition: color var(--duration) var(--ease),
+                border-color var(--duration) var(--ease);
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--live-oak);
+    border-bottom-color: var(--live-oak);
+  }
+
+  .mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-sm);
+  }
+
+  .hamburger {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--iron);
+    position: relative;
+  }
+
+  .hamburger::before,
+  .hamburger::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 2px;
+    background: var(--iron);
+    left: 0;
+  }
+
+  .hamburger::before { top: -7px; }
+  .hamburger::after { top: 7px; }
+
+  /* Backdrop: dim + blur everything behind the logo */
+  .logo-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    pointer-events: none;
+    transition: background 0.6s cubic-bezier(0.45, 0, 0.55, 1),
+                backdrop-filter 0.6s cubic-bezier(0.45, 0, 0.55, 1),
+                -webkit-backdrop-filter 0.6s cubic-bezier(0.45, 0, 0.55, 1);
+  }
+
+  .logo-backdrop.active {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    .header-logo {
+      height: 64px;
+    }
+
+    .header-title {
+      font-size: 1.25rem;
+    }
+
+    .mobile-toggle {
+      display: block;
+      position: absolute;
+      right: var(--space-md);
+      top: var(--space-md);
+    }
+
+    .header-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--white);
+      flex-direction: column;
+      align-items: center;
+      padding: var(--space-lg);
+      border-bottom: 1px solid var(--sandstone);
+      gap: var(--space-md);
+    }
+
+    .header-nav.open {
+      display: flex;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector('.mobile-toggle')
+  const nav = document.querySelector('.header-nav')
+  if (toggle && nav) {
+    toggle.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true'
+      toggle.setAttribute('aria-expanded', String(!expanded))
+      nav.classList.toggle('open')
+    })
+  }
+
+  // Logo expand/collapse
+  const logoTrigger = document.querySelector('.logo-trigger') as HTMLElement
+  const backdrop = document.querySelector('.logo-backdrop') as HTMLElement
+  const brand = document.querySelector('.header-brand') as HTMLElement
+
+  const logoImg = logoTrigger.querySelector('.header-logo') as HTMLElement
+  const siteHeader = document.querySelector('.site-header') as HTMLElement
+
+  function expandLogo() {
+    const rect = logoImg.getBoundingClientRect()
+    const logoCenterY = rect.top + rect.height / 2
+    const viewportCenterY = window.innerHeight / 2
+    const shiftY = viewportCenterY - logoCenterY
+    const scale = window.innerWidth < 641 ? 3 : 4
+
+    logoImg.style.transform = `scale(${scale}) translateY(${shiftY / scale}px)`
+    siteHeader.style.zIndex = '10000'
+    siteHeader.style.background = 'transparent'
+    logoTrigger.classList.add('expanded')
+    backdrop.classList.add('active')
+    brand.classList.add('logo-active')
+  }
+
+  function collapseLogo() {
+    logoImg.style.transform = ''
+    siteHeader.style.zIndex = ''
+    siteHeader.style.background = ''
+    logoTrigger.classList.remove('expanded')
+    backdrop.classList.remove('active')
+    brand.classList.remove('logo-active')
+  }
+
+  if (logoTrigger && backdrop && brand) {
+    logoTrigger.addEventListener('click', (e) => {
+      e.preventDefault()
+      if (logoTrigger.classList.contains('expanded')) {
+        collapseLogo()
+      } else {
+        expandLogo()
+      }
+    })
+
+    backdrop.addEventListener('click', collapseLogo)
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && logoTrigger.classList.contains('expanded')) {
+        collapseLogo()
+      }
+    })
+  }
+</script>

@@ -1,0 +1,301 @@
+---
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro'
+import '../styles/global.css'
+
+interface Props {
+  title: string
+  description?: string
+  ogImage?: string
+  ogType?: 'website' | 'article'
+  noindex?: boolean
+  publishedDate?: Date
+  author?: string
+}
+
+const {
+  title,
+  description = 'Historic Nameless Cemetery in Travis County, Texas. Earliest burial 1882. Preserved by family and community since 2009.',
+  ogImage = 'https://assets.travisbreaks.com/nameless-cemetery/og-default.png',
+  ogType = 'website',
+  noindex = false,
+  publishedDate,
+  author,
+} = Astro.props
+
+const fullTitle = title === 'Home'
+  ? 'Nameless Cemetery Association | Historic Texas Cemetery, Est. 1882'
+  : `${title} | Nameless Cemetery Association`
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site)
+
+// JSON-LD: Organization (every page)
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Nameless Cemetery Association',
+  url: 'https://namelesscemetery.org',
+  foundingDate: '2009',
+  description: 'Preserving and maintaining the historic Nameless Cemetery in Travis County, Texas since 2009.',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '23426 Nameless Road',
+    addressLocality: 'Leander',
+    addressRegion: 'TX',
+    postalCode: '78641',
+    addressCountry: 'US',
+  },
+  email: 'info@namelesscemetery.org',
+  sameAs: [
+    'https://www.facebook.com/NamelessCemetery',
+    'https://www.findagrave.com/cemetery/3528/nameless-cemetery',
+  ],
+}
+
+// JSON-LD: Cemetery (homepage)
+const cemeteryJsonLd = title === 'Home' ? {
+  '@context': 'https://schema.org',
+  '@type': 'Cemetery',
+  name: 'Nameless Cemetery',
+  alternateName: 'Fairview Cemetery',
+  url: 'https://namelesscemetery.org',
+  description: 'Historic Texas Cemetery in Travis County. Earliest burial 1882. Approximately 169 burials. Designated Historic Texas Cemetery in 2007.',
+  foundingDate: '1882',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '23426 Nameless Road',
+    addressLocality: 'Leander',
+    addressRegion: 'TX',
+    postalCode: '78641',
+    addressCountry: 'US',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 30.524370,
+    longitude: -97.928292,
+  },
+  isAccessibleForFree: true,
+} : null
+
+// JSON-LD: Article (story pages)
+const articleJsonLd = ogType === 'article' && publishedDate ? {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description: description,
+  datePublished: publishedDate.toISOString(),
+  author: {
+    '@type': 'Organization',
+    name: author || 'Nameless Cemetery Association',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Nameless Cemetery Association',
+    url: 'https://namelesscemetery.org',
+  },
+  mainEntityOfPage: canonicalUrl.toString(),
+  image: ogImage,
+} : null
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Geo Tags (local SEO for cemetery discovery) -->
+    <meta name="geo.region" content="US-TX" />
+    <meta name="geo.placename" content="Nameless, Travis County, Texas" />
+    <meta name="geo.position" content="30.524370;-97.928292" />
+    <meta name="ICBM" content="30.524370, -97.928292" />
+
+    <!-- OG Tags -->
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="Nameless Cemetery Association" />
+    <meta property="og:locale" content="en_US" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:width" content="1200" />}
+    {ogImage && <meta property="og:image:height" content="630" />}
+    {publishedDate && <meta property="article:published_time" content={publishedDate.toISOString()} />}
+    {author && <meta property="article:author" content={author} />}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
+    {cemeteryJsonLd && <script type="application/ld+json" set:html={JSON.stringify(cemeteryJsonLd)} />}
+    {articleJsonLd && <script type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />}
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <!-- Splash screen -->
+    <div id="splash" aria-hidden="true">
+      <div class="splash-content">
+        <img src="/images/logo.png" alt="" class="splash-logo" />
+        <span class="splash-title">Nameless Cemetery</span>
+      </div>
+    </div>
+
+    <Header />
+    <main class="page-content">
+      <slot />
+    </main>
+    <Footer />
+
+    <style>
+      #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: var(--limestone, #F5F0E8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .splash-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        opacity: 0;
+        animation: splash-fade-in 1.4s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+      }
+
+      .splash-logo {
+        height: 100px;
+        width: auto;
+        object-fit: contain;
+      }
+
+      .splash-title {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.75rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: #2E2A27;
+        opacity: 0;
+        animation: splash-text-in 1s cubic-bezier(0.45, 0, 0.55, 1) 0.6s forwards;
+      }
+
+      #splash.lifting .splash-content {
+        animation: lift-to-header 1.2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+      }
+
+      #splash.fading {
+        opacity: 0;
+        transition: opacity 0.8s cubic-bezier(0.45, 0, 0.55, 1);
+        pointer-events: none;
+      }
+
+      @keyframes splash-fade-in {
+        from { opacity: 0; transform: scale(0.97); }
+        to { opacity: 1; transform: scale(1); }
+      }
+
+      @keyframes splash-text-in {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes lift-to-header {
+        0% { transform: translateY(0); opacity: 1; }
+        100% { transform: translateY(-40vh); opacity: 0; }
+      }
+
+      .page-content {
+        opacity: 0;
+        transition: opacity 1s cubic-bezier(0.45, 0, 0.55, 1);
+      }
+
+      .page-content.visible {
+        opacity: 1;
+      }
+
+      /* Skip splash on reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        #splash { display: none; }
+        .page-content { opacity: 1; }
+      }
+    </style>
+
+    <script>
+      const splash = document.getElementById('splash')
+      const content = document.querySelector('.page-content')
+      const header = document.querySelector('.site-header') as HTMLElement
+
+      // Internal nav sets a flag right before navigating.
+      // If it's there, skip splash and clear it. Otherwise, play splash.
+      const skipSplash = sessionStorage.getItem('nc-skip-splash')
+      sessionStorage.removeItem('nc-skip-splash')
+
+      if (splash && content && header && !skipSplash) {
+        // Fresh load or refresh: play the full splash
+        header.style.opacity = '0'
+        header.style.transition = 'opacity 0.8s cubic-bezier(0.45, 0, 0.55, 1)'
+
+        setTimeout(() => {
+          splash.classList.add('lifting')
+        }, 3000)
+
+        setTimeout(() => {
+          splash.classList.add('fading')
+          header.style.opacity = '1'
+          content.classList.add('visible')
+        }, 3800)
+
+        setTimeout(() => {
+          splash.remove()
+        }, 4800)
+      } else {
+        // Internal nav click: skip splash, show page
+        if (splash) splash.remove()
+        if (content) content.classList.add('visible')
+      }
+
+      // Flag internal link clicks so the next page skips splash
+      document.querySelectorAll('a[href^="/"]').forEach((link) => {
+        link.addEventListener('click', () => {
+          sessionStorage.setItem('nc-skip-splash', '1')
+        })
+      })
+
+      // Scroll reveal observer
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed')
+              observer.unobserve(entry.target)
+            }
+          })
+        },
+        { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+      )
+      document.querySelectorAll('[data-reveal], [data-reveal-stagger]').forEach((el) => {
+        observer.observe(el)
+      })
+    </script>
+  </body>
+</html>

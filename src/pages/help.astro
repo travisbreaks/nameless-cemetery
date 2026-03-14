@@ -1,0 +1,277 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout
+  title="How to Help"
+  description="Volunteer, donate, or connect with the Nameless Cemetery Association. Help preserve a historic Texas cemetery."
+>
+  <section class="page-header">
+    <div class="container--narrow">
+      <h1>How to Help</h1>
+      <p class="page-intro">
+        Nameless Cemetery is maintained entirely by volunteers. Whether you have family here,
+        live nearby, or simply care about preserving Texas history, there are meaningful ways
+        to contribute.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container--narrow">
+
+      <h2 data-reveal>Volunteer</h2>
+      <div class="photo-grid" data-reveal>
+        <figure class="photo-grid-item">
+          <img src="/images/tractor-wide.jpeg" alt="Volunteer grounds work at Nameless Cemetery" loading="lazy" />
+        </figure>
+        <figure class="photo-grid-item">
+          <img src="/images/tractor-cab-pov.jpeg" alt="View from inside the tractor cab during grounds work" loading="lazy" />
+        </figure>
+      </div>
+      <p>
+        Grounds work is the most immediate need. Mowing, trimming, fence repair, headstone
+        cleaning, and general upkeep keep the cemetery accessible and respectful. We organize
+        work days before major events and as seasonal needs arise.
+      </p>
+      <div class="callout">
+        <p>
+          <strong>Next work day:</strong> Early April 2026 (date TBD), in preparation for the
+          April 18 Return to Nameless event. If you'd like to help,
+          <a href="mailto:info@namelesscemetery.org">reach out</a> and let us know.
+        </p>
+      </div>
+
+      <figure class="volunteer-feature">
+        <img src="/images/volunteer-tractor.jpeg" alt="Volunteer working alongside a tractor at Nameless Cemetery" loading="lazy" />
+      </figure>
+
+      <h2 data-reveal>To Make a Donation</h2>
+      <p>
+        Donations support mowing costs, fence repair, headstone restoration, and long-term
+        preservation.
+      </p>
+      <p>
+        Donations can be made by check made out to Nameless Cemetery Assoc. and mailed to:
+      </p>
+      <div class="donation-address">
+        <p>
+          Mark Manley<br/>
+          21401 Cherryhollow Cove<br/>
+          Leander, TX 78641
+        </p>
+      </div>
+      <figure class="photo-feature">
+        <img src="/images/cemetery-wide.jpeg" alt="Nameless Cemetery grounds with lawnmower under live oak trees" loading="lazy" />
+      </figure>
+
+      <h2 data-reveal>Share What You Know</h2>
+      <p>
+        If your family has connections to Nameless Cemetery or the Nameless community, your
+        stories and records matter. Old photos, letters, family Bibles, burial records, and
+        oral history all help build a more complete picture of the people buried here.
+      </p>
+      <p>
+        We are especially interested in:
+      </p>
+      <ul>
+        <li>Photos of headstones, the cemetery, or the community (any era)</li>
+        <li>Family genealogy records connecting to burials at Nameless</li>
+        <li>Stories about the Nameless community, the schoolhouse, or the families here</li>
+        <li>Corrections or additions to our burial records</li>
+      </ul>
+      <p>
+        Please <a href="mailto:info@namelesscemetery.org?subject=Nameless%20Cemetery%20History">contact us</a>
+        with your stories. Every detail helps preserve the record.
+      </p>
+
+      <h2 data-reveal>Attend an Event</h2>
+      <p>
+        The annual meeting (first Saturday in October) and community events at the Nameless
+        Schoolhouse are the best way to connect with the association and meet other families
+        with ties to this place.
+      </p>
+
+      <h2 data-reveal>Spread the Word</h2>
+      <p>
+        Follow us on <a href="https://www.facebook.com/NamelessCemetery" target="_blank" rel="noopener">Facebook</a>
+        and share our posts. If you know someone with family connections to Nameless Cemetery,
+        point them our way. Many descendants don't know the association exists.
+      </p>
+      <p>
+        Also follow
+        <a href="https://www.facebook.com/FriendsofNamelessSchool" target="_blank" rel="noopener">Friends of Nameless School</a>,
+        the nonprofit that preserves the historic 1909 schoolhouse next door. The school and cemetery
+        share the same land and the same community.
+      </p>
+
+      <h2 data-reveal>Contact</h2>
+      <div class="contact-card" data-reveal>
+        <h3>Nameless Cemetery Association</h3>
+        <p>23426 Nameless Road<br/>Leander, TX 78641</p>
+        <p>
+          <a href="mailto:info@namelesscemetery.org">info@namelesscemetery.org</a>
+        </p>
+        <div class="officers">
+          <h4>Officers</h4>
+          <p>President: Carolyn Bonnet - <a href="mailto:carolynbonnet@gmail.com">carolynbonnet@gmail.com</a></p>
+          <p>Treasurer: Mark Manley - <a href="mailto:manleymachining@yahoo.com">manleymachining@yahoo.com</a></p>
+        </div>
+        <p>
+          <a href="https://www.facebook.com/NamelessCemetery" target="_blank" rel="noopener">facebook.com/NamelessCemetery</a>
+        </p>
+        <p>
+          <a href="https://www.findagrave.com/cemetery/3528/nameless-cemetery" target="_blank" rel="noopener">Find a Grave: Nameless Cemetery</a>
+        </p>
+      </div>
+
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--sandstone);
+  }
+
+  .page-header h1 {
+    margin-bottom: var(--space-md);
+  }
+
+  .page-intro {
+    font-size: var(--text-lg);
+    color: var(--patina);
+    line-height: 1.7;
+  }
+
+  ul {
+    padding-left: var(--space-xl);
+    margin-bottom: var(--space-lg);
+  }
+
+  li {
+    margin-bottom: var(--space-sm);
+    line-height: 1.6;
+  }
+
+  .contact-card {
+    background: var(--white);
+    border: 1px solid var(--sandstone);
+    border-radius: 6px;
+    padding: var(--space-xl);
+    margin-top: var(--space-xl);
+  }
+
+  .contact-card h3 {
+    font-size: var(--text-lg);
+    margin-top: 0;
+    margin-bottom: var(--space-md);
+  }
+
+  .contact-card p {
+    margin-bottom: var(--space-sm);
+    font-size: var(--text-base);
+  }
+
+  .officers {
+    margin-block: var(--space-md);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--sandstone);
+  }
+
+  .officers h4 {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--patina);
+    margin-top: 0;
+    margin-bottom: var(--space-sm);
+  }
+
+  .donation-address {
+    background: var(--white);
+    border: 1px solid var(--sandstone);
+    border-radius: 6px;
+    padding: var(--space-lg);
+    margin-block: var(--space-md);
+  }
+
+  .donation-address p {
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* Volunteer feature */
+  .volunteer-feature {
+    margin-block: var(--space-xl);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .volunteer-feature img {
+    width: 100%;
+    height: auto;
+  }
+
+  .volunteer-selfie {
+    text-align: center;
+    background: transparent;
+    border: none;
+    overflow: visible;
+  }
+
+  .volunteer-selfie img {
+    width: auto;
+    max-width: 140px;
+    margin-inline: auto;
+    border-radius: 50%;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
+  }
+
+  .volunteer-feature figcaption {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-style: italic;
+    color: var(--patina);
+    text-align: center;
+    padding-top: var(--space-md);
+  }
+
+  /* Photos */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-block: var(--space-lg);
+  }
+
+  .photo-grid-item {
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .photo-grid-item img {
+    width: 100%;
+    height: auto;
+  }
+
+  .photo-feature {
+    margin-block: var(--space-xl);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .photo-feature img {
+    width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 480px) {
+    .photo-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

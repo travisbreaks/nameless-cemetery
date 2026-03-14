@@ -1,0 +1,53 @@
+---
+const year = new Date().getFullYear()
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p class="footer-tagline">Preserving and maintaining the historic Nameless community in Travis County, Texas.</p>
+    <p class="footer-copy">&copy; {year} Nameless Cemetery Association. Est. 2009. Earliest burial: 1882.</p>
+    <p class="footer-credit">Site created and maintained by Travis Bonnet and <a href="https://www.anthropic.com/claude" target="_blank" rel="noopener">Claude</a></p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-footer-bg);
+    color: var(--color-footer-text);
+    padding-block: var(--space-xl);
+    margin-top: var(--space-4xl);
+    border-top: 1px solid #333;
+  }
+
+  .footer-inner {
+    text-align: center;
+  }
+
+  .footer-tagline {
+    font-size: var(--text-xs);
+    color: var(--muted);
+    margin: 0 0 var(--space-xs) 0;
+  }
+
+  .footer-copy {
+    font-size: var(--text-xs);
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .footer-credit {
+    font-size: var(--text-xs);
+    color: var(--muted);
+    margin: var(--space-sm) 0 0 0;
+  }
+
+  .footer-credit a {
+    color: var(--color-footer-text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .footer-credit a:hover {
+    color: var(--white);
+  }
+</style>

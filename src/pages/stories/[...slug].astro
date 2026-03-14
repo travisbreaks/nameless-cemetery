@@ -1,0 +1,285 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { getCollection, render } from 'astro:content'
+
+export async function getStaticPaths() {
+  const stories = await getCollection('stories')
+  return stories.map((story) => ({
+    params: { slug: story.slug },
+    props: { story },
+  }))
+}
+
+const { story } = Astro.props
+const { Content } = await render(story)
+const { title, date, author, category, description, images, comments, originalUrl } = story.data
+
+const formattedDate = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+})
+---
+
+<BaseLayout
+  title={title}
+  description={description || `${title} - a story from the Nameless Cemetery community.`}
+  ogType="article"
+  publishedDate={date}
+  author={author}
+>
+  <article class="story-article">
+    <header class="story-header">
+      <div class="container--narrow">
+        <a href="/stories/" class="back-link">&larr; All Stories</a>
+        <span class="story-category">{category}</span>
+        <h1>{title}</h1>
+        <div class="story-meta">
+          <time datetime={date.toISOString()}>{formattedDate}</time>
+          <span class="meta-sep">&middot;</span>
+          <span>{author}</span>
+        </div>
+      </div>
+    </header>
+
+    {images && images.length > 0 && (
+      <section class="story-images">
+        <div class="container--narrow">
+          <div class={`image-grid image-grid--${images.length === 1 ? 'single' : 'multi'}`}>
+            {images.map((img) => (
+              <figure class="story-figure" data-reveal>
+                <img src={img.src} alt={img.alt} loading="lazy" />
+                {img.caption && <figcaption>{img.caption}</figcaption>}
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <section class="story-body">
+      <div class="container--narrow">
+        <div class="prose">
+          <Content />
+        </div>
+      </div>
+    </section>
+
+    {comments && comments.length > 0 && (
+      <section class="story-comments">
+        <div class="container--narrow">
+          <h2>Community Responses</h2>
+          <p class="comments-note">
+            These comments were left on the original blog post and preserved here.
+          </p>
+          <div class="comments-list">
+            {comments.map((comment) => (
+              <div class:list={['comment', { 'comment--reply': comment.isReply }]}>
+                <div class="comment-header">
+                  <strong class="comment-name">{comment.name}</strong>
+                  <span class="comment-date">{comment.date}</span>
+                </div>
+                <p class="comment-text" set:html={comment.text} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {originalUrl && (
+      <footer class="story-footer">
+        <div class="container--narrow">
+          <p class="original-source">
+            Originally published on the
+            <a href={originalUrl} target="_blank" rel="noopener noreferrer">Nameless Cemetery WordPress blog</a>.
+          </p>
+        </div>
+      </footer>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .story-header {
+    padding-top: var(--space-2xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--sandstone);
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: var(--text-sm);
+    color: var(--patina);
+    text-decoration: none;
+    margin-bottom: var(--space-lg);
+    transition: color var(--duration) var(--ease);
+  }
+
+  .back-link:hover {
+    color: var(--live-oak);
+  }
+
+  .story-category {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--rust);
+    margin-bottom: var(--space-sm);
+  }
+
+  .story-header h1 {
+    margin-bottom: var(--space-sm);
+  }
+
+  .story-meta {
+    font-size: var(--text-sm);
+    color: var(--patina);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .meta-sep {
+    color: var(--sandstone);
+  }
+
+  /* Images */
+  .story-images {
+    padding-top: var(--space-2xl);
+  }
+
+  .image-grid--single .story-figure {
+    max-width: 100%;
+  }
+
+  .image-grid--multi {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+  }
+
+  .story-figure {
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .story-figure img {
+    width: 100%;
+    height: auto;
+  }
+
+  .story-figure figcaption {
+    font-size: var(--text-sm);
+    color: var(--patina);
+    font-style: italic;
+    padding-top: var(--space-sm);
+    text-align: center;
+  }
+
+  /* Body */
+  .story-body {
+    padding-top: var(--space-2xl);
+  }
+
+  .prose {
+    font-size: var(--text-base);
+    line-height: 1.8;
+  }
+
+  .prose :global(p) {
+    margin-bottom: var(--space-lg);
+  }
+
+  /* Comments */
+  .story-comments {
+    padding-top: var(--space-3xl);
+    margin-top: var(--space-2xl);
+    border-top: 1px solid var(--sandstone);
+  }
+
+  .story-comments h2 {
+    font-size: var(--text-2xl);
+    margin-top: 0;
+    margin-bottom: var(--space-sm);
+  }
+
+  .comments-note {
+    font-size: var(--text-sm);
+    color: var(--patina);
+    font-style: italic;
+    margin-bottom: var(--space-xl);
+  }
+
+  .comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .comment {
+    background: var(--color-bg-alt);
+    padding: var(--space-lg);
+    border-radius: 6px;
+    border-left: 3px solid var(--sandstone);
+  }
+
+  .comment--reply {
+    margin-left: var(--space-xl);
+    border-left-color: var(--live-oak);
+    background: var(--white);
+  }
+
+  .comment-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-md);
+    margin-bottom: var(--space-sm);
+  }
+
+  .comment-name {
+    font-size: var(--text-sm);
+    color: var(--iron);
+  }
+
+  .comment-date {
+    font-size: var(--text-xs);
+    color: var(--patina);
+  }
+
+  .comment-text {
+    font-size: var(--text-base);
+    color: var(--patina);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .comment--reply .comment-name {
+    color: var(--live-oak);
+  }
+
+  /* Footer */
+  .story-footer {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--sandstone);
+  }
+
+  .original-source {
+    font-size: var(--text-sm);
+    color: var(--patina);
+    font-style: italic;
+  }
+
+  @media (max-width: 640px) {
+    .image-grid--multi {
+      grid-template-columns: 1fr;
+    }
+
+    .comment--reply {
+      margin-left: var(--space-md);
+    }
+  }
+</style>

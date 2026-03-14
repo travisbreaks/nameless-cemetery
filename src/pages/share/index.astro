@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+---
+
+<BaseLayout title="Shared Materials" description="Unlisted page for Nameless Cemetery Association materials." noindex>
+  <section class="section">
+    <div class="container--narrow">
+      <h2 data-reveal>Shared Materials</h2>
+      <p class="share-intro" data-reveal>
+        This page is unlisted and intended only for those who have the private shared link.
+        Here you'll find event materials, meeting notes, and other documentation as they become available.
+      </p>
+
+      <div class="share-grid" data-reveal>
+
+        <div class="share-card">
+          <h3>Return to Nameless: Event Flyer</h3>
+          <p class="share-meta">April 18, 2026 &middot; Nameless School &middot; 10a&ndash;3p</p>
+          <a href="/images/april-18-event-flyer.png" target="_blank" class="share-preview">
+            <img
+              src="/images/april-18-event-flyer.png"
+              alt="Return to Nameless event flyer, Saturday April 18, 10a to 3p at Nameless School"
+              loading="lazy"
+            />
+          </a>
+          <div class="share-actions">
+            <a href="/images/april-18-event-flyer.png" download class="btn">Download Flyer</a>
+          </div>
+        </div>
+
+        <div class="share-card">
+          <h3>Meeting Recap: March 12, 2026</h3>
+          <p class="share-meta">In-person meeting, Serenada / Georgetown</p>
+          <p>Summary of discussion topics, action items, and the phased plan for the association through the October 2026 annual meeting.</p>
+          <div class="share-actions">
+            <a href="/images/20260312-meeting-recap.pdf" download class="btn">Download PDF</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .share-intro {
+      font-size: 1.05rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .share-grid {
+      display: grid;
+      gap: 2rem;
+    }
+
+    .share-card {
+      background: var(--color-bg-alt);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .share-card h3 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem;
+      color: var(--color-text);
+    }
+
+    .share-meta {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .share-preview {
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .share-preview img {
+      width: 100%;
+      max-width: 480px;
+      border-radius: 6px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .share-actions {
+      margin-top: 1rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.6rem 1.25rem;
+      background: var(--live-oak);
+      color: var(--white);
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--sky);
+    }
+  </style>
+</BaseLayout>
