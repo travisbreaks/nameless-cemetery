@@ -19,7 +19,29 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Internal tooling (Claude/Tadao scaffolding — local only)
+.claude/
+
 # Sensitive / private
 *.pdf
 docs/scans/
 research/
+
+# Internal working material — contains personal PII (descendant/board
+# contact info). Keep LOCAL ONLY; this repo is public.
+docs/
+drafts/
+email-drafts/
+photos/
+scripts/
+RESEARCH.md
+PROJECT-PLAN.md
+VOICE-GUIDE.md
+wordpress-archive.md
+20260312-meeting-recap.html
+20260312-meeting-recap.md
+20260312-meeting-recap.pdf
+20260312-transcription.md
+
+# Large redundant bitmaps (JPG twins exist; keep local only)
+*.bmp

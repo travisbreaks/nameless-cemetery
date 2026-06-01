@@ -5,6 +5,7 @@ const stories = defineCollection({
   schema: z.object({
     title: z.string(),
     date: z.date(),
+    updated: z.date().optional(),
     author: z.string(),
     category: z.string().default('Community'),
     description: z.string().optional(),
@@ -14,7 +15,7 @@ const stories = defineCollection({
           src: z.string(),
           alt: z.string(),
           caption: z.string().optional(),
-        })
+        }),
       )
       .optional(),
     comments: z
@@ -24,7 +25,7 @@ const stories = defineCollection({
           date: z.string(),
           text: z.string(),
           isReply: z.boolean().default(false),
-        })
+        }),
       )
       .optional(),
     originalUrl: z.string().optional(),

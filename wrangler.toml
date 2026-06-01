@@ -1,0 +1,7 @@
+name = "nameless-cemetery"
+compatibility_date = "2024-12-01"
+pages_build_output_dir = "dist"
+
+[[kv_namespaces]]
+binding = "SIGNUPS"
+id = "29c9b4cc3cab4380806188e272d25486"

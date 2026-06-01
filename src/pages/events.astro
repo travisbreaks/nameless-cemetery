@@ -1,0 +1,242 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout
+  title="Events"
+  description="Upcoming events at Nameless Cemetery and the Nameless Schoolhouse in Travis County, Texas. Cleanup days, community gatherings, and the annual meeting."
+>
+  <section class="page-header">
+    <div class="container--narrow">
+      <h1>Events</h1>
+      <p class="page-intro">
+        Community gatherings, cleanup days, and special events at Nameless Cemetery
+        and the Nameless Schoolhouse.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container--narrow">
+
+      <!-- October Annual Meeting -->
+      <article class="event-block" data-reveal>
+        <div class="event-date-badge">
+          <span class="event-month">OCT</span>
+          <span class="event-day">3</span>
+        </div>
+        <div class="event-details">
+          <h2>Annual Cemetery Meeting</h2>
+          <p class="event-meta">Saturday, October 3, 2026 &middot; Nameless Schoolhouse</p>
+          <p>
+            The yearly gathering of the Nameless Cemetery Association. Updates on the cemetery,
+            financials, and plans for the year ahead.
+            <a href="/#signup">Join our mailing list</a> for updates.
+          </p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Past Events -->
+  <section class="section section--muted">
+    <div class="container--narrow">
+      <h2 data-reveal>Past Events</h2>
+
+      <article class="event-block event-block--past" data-reveal>
+        <div class="event-date-badge event-date-badge--past">
+          <span class="event-month">APR</span>
+          <span class="event-day">18</span>
+        </div>
+        <div class="event-details">
+          <h2>Return to Nameless</h2>
+          <p class="event-meta">Saturday, April 18, 2026</p>
+          <p>
+            Thank you to everyone who came out for Return to Nameless, and to the
+            <a href="https://www.facebook.com/FriendsofNamelessSchool" target="_blank" rel="noopener">Friends of Nameless School</a>
+            for hosting a great day. The Leander Garden Club pollinator showcase, BBQ, silent auction,
+            music, and pioneer displays brought folks together at the schoolhouse and across the cemetery
+            grounds. Special thanks to Mary Cameron and the Friends for organizing.
+          </p>
+        </div>
+      </article>
+
+      <article class="event-block event-block--past" data-reveal>
+        <div class="event-date-badge event-date-badge--past">
+          <span class="event-month">APR</span>
+          <span class="event-day">11</span>
+        </div>
+        <div class="event-details">
+          <h2>Cemetery Clean-Up Day</h2>
+          <p class="event-meta">Saturday, April 11, 2026</p>
+          <p>
+            Thank you to everyone who came out for cleanup day. The grounds are looking great
+            heading into next weekend's Return to Nameless event. We also held our first board
+            meeting with the newly expanded board of directors. Appreciate all who gave their
+            time and energy to this special place.
+          </p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--sandstone);
+  }
+
+  .page-header h1 {
+    margin-bottom: var(--space-md);
+  }
+
+  .page-intro {
+    font-size: var(--text-lg);
+    color: var(--patina);
+    line-height: 1.7;
+  }
+
+  .event-block {
+    display: flex;
+    gap: var(--space-xl);
+    padding: var(--space-xl);
+    background: var(--white);
+    border: 1px solid var(--sandstone);
+    border-radius: 6px;
+    margin-bottom: var(--space-xl);
+  }
+
+  .event-block--featured {
+    border-color: var(--live-oak);
+    border-width: 2px;
+  }
+
+  .event-date-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    min-width: 80px;
+    height: 80px;
+    background: var(--live-oak);
+    color: var(--white);
+    border-radius: 8px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .event-month {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .event-day {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .event-details h2 {
+    font-size: var(--text-xl);
+    margin-top: 0;
+    margin-bottom: var(--space-xs);
+  }
+
+  .event-meta {
+    font-size: var(--text-sm);
+    color: var(--patina);
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+  }
+
+  .event-tagline {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-style: italic;
+    color: var(--rust);
+    margin-bottom: var(--space-md);
+  }
+
+  .event-flyer {
+    margin-block: var(--space-lg);
+    border-radius: 6px;
+    overflow: hidden;
+    max-width: 500px;
+  }
+
+  .event-flyer img {
+    width: 100%;
+    height: auto;
+  }
+
+  .event-location {
+    font-size: var(--text-sm);
+    color: var(--patina);
+    font-style: italic;
+  }
+
+  .event-actions {
+    margin-top: var(--space-md);
+  }
+
+  .add-to-cal {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--live-oak);
+    text-decoration: none;
+    border: 1px solid var(--live-oak);
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+    transition: background var(--duration) var(--ease), color var(--duration) var(--ease);
+  }
+
+  .add-to-cal:hover {
+    background: var(--live-oak);
+    color: var(--white);
+  }
+
+  .section--muted {
+    opacity: 0.85;
+  }
+
+  .section--muted h2 {
+    color: var(--patina);
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  .event-block--past {
+    border-color: var(--sandstone);
+    background: var(--parchment);
+  }
+
+  .event-block--past .event-details p {
+    color: var(--patina);
+  }
+
+  .event-date-badge--past {
+    background: var(--sandstone);
+    color: var(--iron);
+  }
+
+  @media (max-width: 640px) {
+    .event-block {
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .event-date-badge {
+      width: 72px;
+      height: 72px;
+    }
+  }
+</style>

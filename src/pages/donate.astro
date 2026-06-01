@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import SignupForm from '../components/SignupForm.astro'
+---
+
+<BaseLayout
+  title="Donate"
+  description="Support Nameless Cemetery Association. Help preserve a historic Texas cemetery in Travis County."
+>
+  <section class="page-header">
+    <div class="container--narrow">
+      <h1>Support Nameless Cemetery</h1>
+      <p class="page-intro">
+        Nameless Cemetery is maintained entirely by volunteers and funded solely by donations.
+        Every contribution helps preserve this historic ground for future generations.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container--narrow">
+
+      <h2 data-reveal>Donate by Mail</h2>
+      <p>
+        Donations can be made by check, payable to <strong>Nameless Cemetery Assoc.</strong> and mailed to:
+      </p>
+      <div class="donation-address" data-reveal>
+        <p>
+          Mark Manley<br/>
+          21401 Cherryhollow Cove<br/>
+          Leander, TX 78641
+        </p>
+      </div>
+      <p>
+        Donations help with mowing, grounds maintenance, tree work, fence repair, and
+        general upkeep. The association has no paid staff; every dollar goes directly
+        to preserving the cemetery.
+      </p>
+
+      <div class="online-coming-soon" data-reveal>
+        <h2>Online Donations</h2>
+        <p>
+          Online donation capability is coming soon. The association is currently pursuing
+          501(c)(3) tax-exempt status, which will allow us to accept tax-deductible
+          contributions online.
+        </p>
+        <p>
+          In the meantime, checks by mail are the best way to contribute.
+          Join our mailing list below to be notified when online donations become available.
+        </p>
+      </div>
+
+      <div class="signup-section" data-reveal>
+        <h2>Stay Updated</h2>
+        <p>Get notified when online donations launch, plus cemetery events and news.</p>
+        <SignupForm />
+      </div>
+
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--sandstone);
+  }
+
+  .page-header h1 {
+    margin-bottom: var(--space-md);
+  }
+
+  .page-intro {
+    font-size: var(--text-lg);
+    color: var(--patina);
+    line-height: 1.7;
+  }
+
+  .donation-address {
+    background: var(--white);
+    border: 1px solid var(--sandstone);
+    border-radius: 6px;
+    padding: var(--space-lg);
+    margin-block: var(--space-md);
+  }
+
+  .donation-address p {
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .online-coming-soon {
+    margin-top: var(--space-2xl);
+    padding: var(--space-xl);
+    background: var(--limestone, #F5F0E8);
+    border-radius: 6px;
+    border-left: 4px solid var(--live-oak);
+  }
+
+  .online-coming-soon h2 {
+    margin-top: 0;
+    font-size: var(--text-xl);
+  }
+
+  .signup-section {
+    margin-top: var(--space-2xl);
+  }
+
+  .signup-section h2 {
+    margin-bottom: var(--space-sm);
+  }
+
+  .signup-section p {
+    margin-bottom: var(--space-lg);
+    color: var(--patina);
+  }
+</style>

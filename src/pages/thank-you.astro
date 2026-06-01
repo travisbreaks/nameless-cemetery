@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout title="Thank You" noindex={true}>
+  <section class="page-header">
+    <div class="container--narrow">
+      <h1>Thank You</h1>
+      <p class="page-intro">
+        You've been added to the Nameless Cemetery Association mailing list.
+        We'll keep you updated on events, cemetery news, and volunteer opportunities.
+      </p>
+      <div class="back-links">
+        <a href="/">Back to Home</a>
+        <a href="/events/">See Upcoming Events</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-3xl);
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .page-header h1 {
+    margin-bottom: var(--space-md);
+  }
+
+  .page-intro {
+    font-size: var(--text-lg);
+    color: var(--patina);
+    line-height: 1.7;
+    margin-bottom: var(--space-xl);
+  }
+
+  .back-links {
+    display: flex;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+  }
+
+  .back-links a {
+    font-weight: 600;
+    color: var(--live-oak);
+  }
+</style>

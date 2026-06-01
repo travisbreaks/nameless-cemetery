@@ -14,17 +14,47 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
       <div class="share-grid" data-reveal>
 
         <div class="share-card">
-          <h3>Return to Nameless: Event Flyer</h3>
-          <p class="share-meta">April 18, 2026 &middot; Nameless School &middot; 10a&ndash;3p</p>
+          <h3>Return to Nameless: Garden Club Flyer</h3>
+          <p class="share-meta">April 18, 2026 &middot; Leander Garden Club Pollinator Showcase &middot; 10a&ndash;3p</p>
+          <a href="/images/return-to-nameless-garden-club-flyer.jpg" target="_blank" class="share-preview">
+            <img
+              src="/images/return-to-nameless-garden-club-flyer.jpg"
+              alt="Return to Nameless - Leander Garden Club Pollinator Garden Showcase, Saturday April 18, 10 AM to 3 PM at Historic Nameless School"
+              loading="lazy"
+            />
+          </a>
+          <div class="share-actions">
+            <a href="/images/return-to-nameless-garden-club-flyer.jpg" download class="btn">Download Flyer</a>
+          </div>
+        </div>
+
+        <div class="share-card">
+          <h3>Event Flyer: Cemetery Gate Version</h3>
+          <p class="share-meta">April 18, 2026 &middot; Alternate design with gate arch photo</p>
           <a href="/images/april-18-event-flyer.png" target="_blank" class="share-preview">
             <img
               src="/images/april-18-event-flyer.png"
-              alt="Return to Nameless event flyer, Saturday April 18, 10a to 3p at Nameless School"
+              alt="Return to Nameless event flyer with cemetery gate arch, Saturday April 18, 10a to 3p at Nameless School"
               loading="lazy"
             />
           </a>
           <div class="share-actions">
             <a href="/images/april-18-event-flyer.png" download class="btn">Download Flyer</a>
+          </div>
+        </div>
+
+        <div class="share-card">
+          <h3>Event Flyer: Schoolhouse Original</h3>
+          <p class="share-meta">April 18, 2026 &middot; Original design with schoolhouse photo</p>
+          <a href="/images/return-to-nameless-flyer-original.jpg" target="_blank" class="share-preview">
+            <img
+              src="/images/return-to-nameless-flyer-original.jpg"
+              alt="Return to Nameless original event flyer with schoolhouse and wildflowers, Saturday April 18, 10a to 3p"
+              loading="lazy"
+            />
+          </a>
+          <div class="share-actions">
+            <a href="/images/return-to-nameless-flyer-original.jpg" download class="btn">Download Flyer</a>
           </div>
         </div>
 
@@ -103,6 +133,32 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 
     .btn:hover {
       background: var(--sky);
+    }
+
+    .btn--disabled {
+      background: var(--sandstone);
+      color: var(--patina);
+      cursor: default;
+    }
+
+    .btn--disabled:hover {
+      background: var(--sandstone);
+    }
+
+    .share-preview--placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      background: var(--color-bg-alt);
+      border: 2px dashed var(--sandstone);
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .share-preview--placeholder p {
+      color: var(--patina);
+      font-style: italic;
     }
   </style>
 </BaseLayout>

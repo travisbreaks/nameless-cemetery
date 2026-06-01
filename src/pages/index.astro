@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
+import SignupForm from '../components/SignupForm.astro'
 ---
 
 <BaseLayout title="Home">
@@ -24,9 +25,17 @@ import BaseLayout from '../layouts/BaseLayout.astro'
           rel="noopener"
           class="hero-location"
         >
-          23426 Nameless Road, Leander, Texas
+          23436 Nameless Road, Leander, Texas
         </a>
       </div>
+    </div>
+  </section>
+
+  <!-- Mailing List CTA -->
+  <section class="section signup-cta">
+    <div class="container--narrow" data-reveal>
+      <p class="signup-cta-text">Stay connected with Nameless Cemetery events and news.</p>
+      <SignupForm compact />
     </div>
   </section>
 
@@ -41,12 +50,16 @@ import BaseLayout from '../layouts/BaseLayout.astro'
       <p>
         Nameless Cemetery sits on land deeded to Travis County in 1906 by Bell and Rose Turner
         "for a public free school and burial grounds and church purposes." The earliest known
-        burial dates to 1882, when two-year-old Rudolf Kauffman was laid to rest here.
+        burial dates to 1882, when 11-year-old Samuel Pope was laid to rest here.
       </p>
       <p>
         Today the cemetery holds approximately 169 burials spanning over 140 years of Hill Country
-        families. The Nameless Cemetery Association was formed in 2009 to preserve, maintain, and
-        honor this historic ground.
+        families. Browse all recorded memorials on
+        <a href="https://www.findagrave.com/cemetery/3528/nameless-cemetery" target="_blank" rel="noopener">Find a Grave</a>.
+        The Nameless Cemetery Association was formed in 2009 to preserve, maintain, and
+        honor this historic ground. Follow us on
+        <a href="https://www.facebook.com/NamelessCemetery" target="_blank" rel="noopener">Facebook</a>
+        for updates.
       </p>
       <p>
         In 2007, the cemetery received its
@@ -104,48 +117,42 @@ import BaseLayout from '../layouts/BaseLayout.astro'
   <!-- Upcoming -->
   <section class="section section--alt">
     <div class="container--narrow">
-      <h2 data-reveal>Upcoming Events</h2>
-      <div class="event-card" data-reveal>
-        <div class="event-date">
-          <span class="event-month">MAR</span>
-          <span class="event-day">30</span>
-        </div>
-        <div class="event-info">
-          <h3>Historical Marker</h3>
-          <p>The association is exploring a Texas Historical Commission marker for Nameless Cemetery.
-          Stay tuned for updates.</p>
-        </div>
-      </div>
-      <div class="event-card" data-reveal>
-        <div class="event-date">
-          <span class="event-month">APR</span>
-          <span class="event-day">18</span>
-        </div>
-        <div class="event-info">
-          <h3><a href="https://www.facebook.com/FriendsofNamelessSchool" target="_blank" rel="noopener">Return to Nameless</a></h3>
-          <p>10:00 AM to 3:00 PM at the Nameless Schoolhouse. Hosted by
-          <a href="https://www.facebook.com/FriendsofNamelessSchool" target="_blank" rel="noopener">Friends of Nameless School</a>.
-          Silent auction, soapmaking, Texas Ranger display, bobbin lace making, local authors,
-          music, pioneer artifacts, spinning and weaving, and more. Free event to benefit the
-          Nameless School and the Gray House.</p>
-          <a
-            href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Return+to+Nameless&dates=20260418T150000Z/20260418T200000Z&details=Free+event+to+benefit+Nameless+School+and+the+Gray+House.+Silent+auction,+soapmaking,+Texas+Ranger+display,+music,+pioneer+artifacts,+and+more.+Hosted+by+Friends+of+Nameless+School.&location=Nameless+Schoolhouse,+23426+Nameless+Road,+Leander,+TX+78641"
-            target="_blank"
-            rel="noopener"
-            class="add-to-cal"
-          >+ Add to calendar</a>
-        </div>
-      </div>
+      <h2 data-reveal><a href="/events/" class="section-heading-link">Upcoming Events</a></h2>
       <div class="event-card" data-reveal>
         <div class="event-date">
           <span class="event-month">OCT</span>
-          <span class="event-day">TBD</span>
+          <span class="event-day">3</span>
         </div>
         <div class="event-info">
           <h3>Annual Meeting</h3>
-          <p>First Saturday in October (date TBD). Yearly gathering at the Nameless Schoolhouse.
-          <a href="mailto:info@namelesscemetery.org?subject=Mailing%20List">Sign up for our mailing list</a> for updates.</p>
+          <p>Saturday, October 3. Yearly gathering at the Nameless Schoolhouse.
+          <a href="/events/">See details</a> or <a href="#signup">join our mailing list</a> for updates.</p>
         </div>
+      </div>
+      <div class="event-card" data-reveal>
+        <div class="event-date event-date--status">
+          <span class="event-status-icon">&#9733;</span>
+        </div>
+        <div class="event-info">
+          <h3>Historical Marker</h3>
+          <p>The association is pursuing a Texas Historical Commission marker for Nameless Cemetery.
+          Application in progress.</p>
+        </div>
+      </div>
+      <p class="events-link" data-reveal><a href="/events/">See all events &rarr;</a></p>
+    </div>
+  </section>
+
+  <!-- Stay Connected -->
+  <section id="signup" class="section section--alt">
+    <div class="container--narrow">
+      <h2 data-reveal>Stay Connected</h2>
+      <p data-reveal>
+        Join our mailing list to receive updates on events, cemetery news, and volunteer opportunities.
+        We send occasional updates, never spam.
+      </p>
+      <div data-reveal>
+        <SignupForm />
       </div>
     </div>
   </section>
@@ -172,9 +179,19 @@ import BaseLayout from '../layouts/BaseLayout.astro'
           target="_blank"
           rel="noopener"
         >
-          23426 Nameless Road, Leander, TX 78641
+          23436 Nameless Road, Leander, TX 78641
         </a>
       </p>
+      <div class="connect-links" data-reveal>
+        <a href="https://www.findagrave.com/cemetery/3528/nameless-cemetery" target="_blank" rel="noopener" class="connect-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M12 4v16"/><path d="M4 12h16"/><circle cx="12" cy="10" r="2"/></svg>
+          Find a Grave
+        </a>
+        <a href="https://www.facebook.com/NamelessCemetery" target="_blank" rel="noopener" class="connect-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          Facebook
+        </a>
+      </div>
     </div>
   </section>
 
@@ -437,6 +454,62 @@ import BaseLayout from '../layouts/BaseLayout.astro'
     line-height: 1.6;
   }
 
+  .event-location-mini {
+    font-size: var(--text-xs);
+    color: var(--patina);
+    font-style: italic;
+    margin-top: var(--space-xs);
+  }
+
+  .event-date--status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    background: var(--rust, #8B4513);
+    color: var(--white);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .event-status-icon {
+    font-size: var(--text-2xl);
+    line-height: 1;
+  }
+
+  .signup-cta {
+    padding-block: var(--space-lg);
+    background: var(--limestone, #F5F0E8);
+    border-bottom: 1px solid var(--sandstone);
+  }
+
+  .signup-cta-text {
+    font-size: var(--text-lg);
+    color: var(--patina);
+    margin-bottom: var(--space-md);
+    text-align: center;
+  }
+
+  .section-heading-link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .section-heading-link:hover {
+    color: var(--live-oak);
+  }
+
+  .events-link {
+    text-align: center;
+    margin-top: var(--space-lg);
+  }
+
+  .events-link a {
+    font-weight: 600;
+    color: var(--live-oak);
+  }
+
   /* Photos */
   .photo-feature {
     margin-block: var(--space-xl);
@@ -465,6 +538,38 @@ import BaseLayout from '../layouts/BaseLayout.astro'
   .map-address {
     margin-top: var(--space-md);
     font-size: var(--text-base);
+  }
+
+  /* Connect links */
+  .connect-links {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-xl);
+    margin-top: var(--space-xl);
+  }
+
+  .connect-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--live-oak);
+    text-decoration: none;
+    padding: var(--space-sm) var(--space-lg);
+    border: 1px solid var(--sandstone);
+    border-radius: 6px;
+    background: var(--white);
+    transition: background var(--duration) var(--ease), border-color var(--duration) var(--ease);
+  }
+
+  .connect-link:hover {
+    background: var(--color-bg-alt);
+    border-color: var(--live-oak);
+  }
+
+  .connect-link svg {
+    flex-shrink: 0;
   }
 
   /* CTA */

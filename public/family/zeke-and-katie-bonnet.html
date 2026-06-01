@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Zeke &amp; Katie Bonnet Family Tree | Nameless Cemetery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --iron: #2E2A27; --patina: #6B5E4F; --limestone: #F5F0E8; --parchment: #EDE6D8;
+      --live-oak: #4D6B3F; --sky: #5B8BA8; --rust: #8B5E3C; --sandstone: #C4B396;
+      --white: #FFFFFF; --dark: #1A1A1A;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Sans 3', sans-serif;
+      --ease: cubic-bezier(0.45, 0, 0.55, 1);
+    }
+    body { font-family: var(--font-body); color: var(--iron); background: var(--limestone); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    .page-header { text-align: center; padding: 3rem 1.5rem 2rem; border-bottom: 1px solid var(--sandstone); }
+    .page-header h1 { font-family: var(--font-heading); font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 600; color: var(--iron); margin-bottom: 0.5rem; }
+    .page-header .subtitle { color: var(--patina); font-size: 1rem; font-weight: 300; }
+    .page-header .draft-badge { display: inline-block; background: var(--rust); color: var(--white); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 10px; border-radius: 999px; margin-bottom: 1rem; }
+    .back-link { display: inline-block; font-size: 0.875rem; color: var(--live-oak); text-decoration: none; margin-bottom: 1.5rem; }
+    .back-link:hover { text-decoration: underline; }
+    .tree-wrap { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .generation { margin-bottom: 2.5rem; }
+    .generation-label { font-family: var(--font-heading); font-size: 1.125rem; color: var(--rust); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--sandstone); }
+    .toggle-buttons { display: flex; gap: 0; margin-bottom: 1.5rem; }
+    .toggle-btn { flex: 1; padding: 0.625rem 1rem; font-family: var(--font-heading); font-size: 0.9375rem; font-weight: 600; border: 2px solid var(--sandstone); background: var(--parchment); color: var(--patina); cursor: pointer; transition: all 0.3s var(--ease); }
+    .toggle-btn:first-child { border-radius: 6px 0 0 6px; }
+    .toggle-btn:last-child { border-radius: 0 6px 6px 0; border-left: none; }
+    .toggle-btn.active { background: var(--rust); border-color: var(--rust); color: var(--white); }
+    .couple { display: flex; align-items: stretch; gap: 0; margin-bottom: 1rem; }
+    .person { background: var(--white); border: 1px solid var(--sandstone); border-radius: 6px; padding: 1rem 1.25rem; flex: 1; min-width: 0; transition: box-shadow 0.3s var(--ease); }
+    .person:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .person.buried { border-left: 4px solid var(--live-oak); }
+    .person.living { border-left: 4px solid var(--sky); }
+    .couple-connector { display: flex; align-items: center; padding: 0 0.5rem; color: var(--sandstone); font-size: 1.25rem; font-weight: 300; }
+    .person-name { font-family: var(--font-heading); font-size: 1.0625rem; font-weight: 600; color: var(--iron); margin-bottom: 0.25rem; }
+    .person-dates { font-size: 0.8125rem; color: var(--patina); margin-bottom: 0.25rem; }
+    .person-note { font-size: 0.8125rem; color: var(--patina); font-style: italic; }
+    .buried-badge { display: inline-block; background: var(--live-oak); color: var(--white); font-size: 0.6875rem; font-weight: 600; padding: 1px 6px; border-radius: 3px; margin-left: 0.5rem; vertical-align: middle; }
+    .living-badge { display: inline-block; background: var(--sky); color: var(--white); font-size: 0.6875rem; font-weight: 600; padding: 1px 6px; border-radius: 3px; margin-left: 0.5rem; vertical-align: middle; }
+    .siblings-header { font-family: var(--font-heading); font-size: 1rem; color: var(--patina); margin: 2rem 0 0.75rem; font-weight: 400; font-style: italic; }
+    .siblings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.5rem; }
+    .sibling { background: var(--parchment); border: 1px solid var(--sandstone); border-radius: 4px; padding: 0.5rem 0.75rem; font-size: 0.875rem; }
+    .sibling-name { font-weight: 600; color: var(--iron); }
+    .sibling-dates { font-size: 0.75rem; color: var(--patina); }
+    .branch { margin-bottom: 1.25rem; padding: 1rem 1.25rem; background: var(--white); border: 1px solid var(--sandstone); border-radius: 6px; }
+    .branch-header { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.25rem; }
+    .branch-name { font-family: var(--font-heading); font-size: 1rem; font-weight: 600; color: var(--iron); }
+    .branch-dates { font-size: 0.8125rem; color: var(--patina); }
+    .branch-spouse { font-size: 0.875rem; color: var(--patina); }
+    .branch-note { font-size: 0.8125rem; color: var(--patina); font-style: italic; margin-bottom: 0.5rem; }
+    .branch-children-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.5rem; margin-top: 0.5rem; }
+    .branch-child { background: var(--parchment); border: 1px solid var(--sandstone); border-radius: 4px; padding: 0.5rem 0.75rem; font-size: 0.8125rem; }
+    .branch-child-name { font-weight: 600; color: var(--iron); }
+    .branch-child-note { color: var(--patina); font-size: 0.75rem; }
+    .legend { display: flex; flex-wrap: wrap; gap: 1.5rem; padding: 1rem 1.5rem; background: var(--parchment); border-radius: 6px; margin-bottom: 2rem; font-size: 0.8125rem; color: var(--patina); }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; }
+    .legend-swatch { width: 16px; height: 16px; border-radius: 3px; border: 1px solid var(--sandstone); }
+    .tree-footer { text-align: center; padding: 2rem; font-size: 0.8125rem; color: var(--patina); border-top: 1px solid var(--sandstone); }
+    @media (max-width: 640px) {
+      .couple { flex-direction: column; }
+      .couple-connector { padding: 0.25rem 0; justify-content: center; }
+      .siblings-grid { grid-template-columns: 1fr 1fr; }
+      .branch-children-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-header">
+  <a href="/" class="back-link">&larr; namelesscemetery.org</a>
+  <div class="draft-badge">Draft / Unlisted</div>
+  <h1>The Zeke &amp; Katie Bonnet Family</h1>
+  <p class="subtitle">Seven generations rooted at Nameless Cemetery</p>
+</div>
+<div class="tree-wrap">
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="border-left: 4px solid var(--live-oak);"></div><span>Buried at Nameless</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="border-left: 4px solid var(--sky);"></div><span>Living</span></div>
+  </div>
+
+  <div class="generation">
+    <div class="toggle-buttons">
+      <button class="toggle-btn active" data-side="bonnet" onclick="showSide('bonnet')">Bonnet Side</button>
+      <button class="toggle-btn" data-side="whitt" onclick="showSide('whitt')">Whitt Side</button>
+    </div>
+    <div id="bonnet-side">
+      <div class="couple">
+        <div class="person"><div class="person-name">Henry Daniel Bonnet</div><div class="person-dates">1856 &ndash; 1940</div><div class="person-note">Bonnet Family Cemetery, Cedar Park</div></div>
+        <div class="couple-connector">&amp;</div>
+        <div class="person"><div class="person-name">Louise Sophronia Schutze</div><div class="person-dates">1859 &ndash; 1899</div><div class="person-note">Bonnet Family Cemetery, Cedar Park</div></div>
+      </div>
+      <div class="couple" style="margin-top:0.5rem;">
+        <div class="person"><div class="person-name">Willie Henry Bonnet</div><div class="person-dates">1877 &ndash; 1949</div><div class="person-note">The "Big Bonnet Reunion" is named after Willie Henry</div></div>
+        <div class="couple-connector">&amp;</div>
+        <div class="person"><div class="person-name">Mary Catherine Henry</div><div class="person-dates">1881 &ndash; 1947</div></div>
+      </div>
+      <p class="siblings-header">Willie Henry &amp; Mary Catherine's children (16 total)</p>
+      <div class="siblings-grid">
+        <div class="sibling"><span class="sibling-name">Bernie Bonnet</span><br><span class="sibling-dates">b. 1895</span></div>
+        <div class="sibling"><span class="sibling-name">Creola Jane Bonnet</span><br><span class="sibling-dates">1900 &ndash; 1982</span></div>
+        <div class="sibling"><span class="sibling-name">Ola Bolt (nee Bonnet)</span><br><span class="sibling-dates">1900 &ndash; 1982</span></div>
+        <div class="sibling"><span class="sibling-name">John H Bonnet</span><br><span class="sibling-dates">1902 &ndash; 1975</span></div>
+        <div class="sibling"><span class="sibling-name">Roy Bonnet</span><br><span class="sibling-dates">b. 1904</span></div>
+        <div class="sibling"><span class="sibling-name">Marion Malcolm Bonnet</span><br><span class="sibling-dates">1904 &ndash; 1992</span></div>
+        <div class="sibling"><span class="sibling-name">Felix Milton Bonnet</span><br><span class="sibling-dates">1905 &ndash; 1995</span></div>
+        <div class="sibling" style="border-left:4px solid var(--live-oak);font-weight:600;"><span class="sibling-name">Ezekiel Joseph Bonnet (Zeke)</span><br><span class="sibling-dates">1907 &ndash; 1990 &bull; Buried at Nameless</span></div>
+        <div class="sibling"><span class="sibling-name">Lelia Louise Bonnet</span><br><span class="sibling-dates">1909 &ndash; 1919</span></div>
+        <div class="sibling"><span class="sibling-name">Richard Ray Bonnet</span><br><span class="sibling-dates">1911 &ndash; 1970</span></div>
+        <div class="sibling"><span class="sibling-name">Willie Bee Bonnet</span><br><span class="sibling-dates">1914 &ndash; 1998</span></div>
+        <div class="sibling"><span class="sibling-name">Ellis Adolf Bonnet</span><br><span class="sibling-dates">1917 &ndash; 1995</span></div>
+        <div class="sibling"><span class="sibling-name">Laura Mae Bonnet</span><br><span class="sibling-dates">1920 &ndash; 1920</span></div>
+        <div class="sibling"><span class="sibling-name">Frances Irene Bonnet</span><br><span class="sibling-dates">1921 &ndash; 1993</span></div>
+        <div class="sibling"><span class="sibling-name">Sophronia Florentine Bonnet</span><br><span class="sibling-dates">1923 &ndash; 1995</span></div>
+      </div>
+    </div>
+    <div id="whitt-side" style="display:none;">
+      <div class="couple">
+        <div class="person"><div class="person-name">Thomas J Whitt</div><div class="person-dates">1851 &ndash; 1910</div></div>
+        <div class="couple-connector">&amp;</div>
+        <div class="person"><div class="person-name">Nancy Isabelle Smith</div><div class="person-dates">1849 &ndash; 1913</div><div class="person-note">Round Mountain, Travis Co.</div></div>
+      </div>
+      <div class="couple" style="margin-top:0.5rem;">
+        <div class="person"><div class="person-name">Thomas Conrad "Connie" Whitt</div><div class="person-dates">1881 &ndash; 1978</div><div class="person-note">Born Eastland, TX. Died Liberty Hill. Lived to 97.</div></div>
+        <div class="couple-connector">&amp;</div>
+        <div class="person"><div class="person-name">Edna Ophelia Harris</div><div class="person-dates">1883 &ndash; 1963</div><div class="person-note">Married Sep 2, 1906. Died Liberty Hill.</div></div>
+      </div>
+      <p class="siblings-header">Connie &amp; Edna's children (9 total)</p>
+      <div class="siblings-grid">
+        <div class="sibling"><span class="sibling-name">Alvin Edgar Whitt</span><br><span class="sibling-dates">1907 &ndash; 1986</span></div>
+        <div class="sibling" style="border-left:4px solid var(--live-oak);font-weight:600;"><span class="sibling-name">Camilla Isabell Whitt (Katie)</span><br><span class="sibling-dates">1909 &ndash; 1996 &bull; Buried at Nameless</span></div>
+        <div class="sibling"><span class="sibling-name">Lorna Fay Whitt</span><br><span class="sibling-dates">1911 &ndash; 1999</span></div>
+        <div class="sibling"><span class="sibling-name">David Bernard Whitt</span><br><span class="sibling-dates">1913 &ndash; 1992</span></div>
+        <div class="sibling"><span class="sibling-name">Millard Conrad Whitt</span><br><span class="sibling-dates">1915 &ndash; 2005</span></div>
+        <div class="sibling"><span class="sibling-name">Crystal Eula Whitt</span><br><span class="sibling-dates">1917 &ndash; 2001</span></div>
+        <div class="sibling"><span class="sibling-name">Thomas J Whitt</span><br><span class="sibling-dates">1919 &ndash; 2006</span></div>
+        <div class="sibling"><span class="sibling-name">Edna Belle Whitt</span><br><span class="sibling-dates">1920 &ndash; 2001</span></div>
+        <div class="sibling"><span class="sibling-name">Bessie Whitt</span><br><span class="sibling-dates">b. 1923</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="generation">
+    <div class="couple">
+      <div class="person buried"><div class="person-name">Ezekiel Joseph "Zeke" Bonnet <span class="buried-badge">Nameless</span></div><div class="person-dates">September 7, 1907 &ndash; November 2, 1990</div><div class="person-note">Born San Saba, TX. Buried at Nameless Cemetery.</div></div>
+      <div class="couple-connector">&amp;</div>
+      <div class="person buried"><div class="person-name">Camilla Isabell "Katie" Whitt <span class="buried-badge">Nameless</span></div><div class="person-dates">May 16, 1909 &ndash; March 28, 1996</div><div class="person-note">Born Liberty Hill, TX. Married Christmas Day in a Model T.</div></div>
+    </div>
+    <p class="siblings-header">Zeke &amp; Katie's 11 children (9 boys, 2 girls)</p>
+    <div class="siblings-grid">
+      <div class="sibling"><span class="sibling-name">Eugene "Gene" C. Bonnet</span><br><span class="sibling-dates">1929 &ndash; 2021 &bull; Port Lavaca</span></div>
+      <div class="sibling" style="border-left:4px solid var(--live-oak);"><span class="sibling-name">David Ezekiel Bonnet</span><br><span class="sibling-dates">1933 &ndash; 2022 &bull; Buried at Nameless</span></div>
+      <div class="sibling"><span class="sibling-name">Earnest Leroy Bonnet</span><br><span class="sibling-dates">1935 &ndash; 2002 &bull; Bagdad Cemetery, Leander</span></div>
+      <div class="sibling" style="border-left:4px solid var(--sky);"><span class="sibling-name">Doug (Joel Douglas) Bonnet</span><br><span class="sibling-dates">Living &bull; m. Berneice Smart</span></div>
+      <div class="sibling"><span class="sibling-name">Morris Bonnet</span><br><span class="sibling-dates">b. 1937 &bull; m. Ida (Williams)</span></div>
+      <div class="sibling" style="border-left:4px solid var(--live-oak);"><span class="sibling-name">Meredith Ray Bonnet</span><br><span class="sibling-dates">1942 &ndash; 1943 &bull; Buried at Nameless</span></div>
+      <div class="sibling" style="border-left:4px solid var(--sky);"><span class="sibling-name">Lois Bonnet Tucker</span><br><span class="sibling-dates">Living &bull; m. Winford Tucker (dec.)</span></div>
+      <div class="sibling" style="border-left:4px solid var(--live-oak);"><span class="sibling-name">Doris Bonnet Reaves-Sullivan</span><br><span class="sibling-dates">d. 2024 &bull; Buried at Nameless</span></div>
+      <div class="sibling"><span class="sibling-name">Troy Bonnet</span><br><span class="sibling-dates">Georgetown &bull; m. Carolyn</span></div>
+      <div class="sibling" style="border-left:4px solid var(--live-oak);"><span class="sibling-name">Glen Everett Bonnet</span><br><span class="sibling-dates">1949 &ndash; 2021 &bull; Veteran &bull; Buried at Nameless</span></div>
+      <div class="sibling" style="border-left:4px solid var(--sky);font-weight:600;"><span class="sibling-name">Roger Doyle Bonnet</span><br><span class="sibling-dates">b. 1952 &bull; Living</span></div>
+    </div>
+  </div>
+
+  <div class="generation">
+    <div class="generation-label">Zeke &amp; Katie's Descendants</div>
+    <div class="branch"><div class="branch-header"><span class="branch-name">Eugene "Gene" C. Bonnet</span><span class="branch-dates">1929 &ndash; 2021</span><span class="branch-spouse">&amp; Evelyne (dec.)</span></div><div class="branch-note">Port Lavaca, TX</div><div class="branch-children-grid"><div class="branch-child"><span class="branch-child-name">Dennis Bonnet</span><br><span class="branch-child-note">m. Lisa &bull; Pastor, Snook Assembly of God</span></div><div class="branch-child"><span class="branch-child-name">Michael Bonnet</span><br><span class="branch-child-note">Deceased</span></div></div></div>
+    <div class="branch" style="border-left:4px solid var(--live-oak);"><div class="branch-header"><span class="branch-name">David Ezekiel Bonnet</span><span class="branch-dates">1933 &ndash; 2022</span><span class="buried-badge">Nameless</span></div><div class="branch-children-grid"><div class="branch-child"><span class="branch-child-name">Venona</span></div><div class="branch-child"><span class="branch-child-name">Joyce</span></div></div></div>
+    <div class="branch"><div class="branch-header"><span class="branch-name">Earnest Leroy Bonnet</span><span class="branch-dates">1935 &ndash; 2002</span></div><div class="branch-note">Bagdad Cemetery, Leander &bull; Sheet Metal Workers Local 67 (42 years)</div><div class="branch-children-grid"><div class="branch-child"><span class="branch-child-name">Kenny Bonnet</span><br><span class="branch-child-note">m. Renee &bull; Austin</span></div><div class="branch-child"><span class="branch-child-name">Keith Bonnet</span><br><span class="branch-child-note">m. Rosanne &bull; Leander</span></div><div class="branch-child"><span class="branch-child-name">Cindy Brooks</span><br><span class="branch-child-note">m. Steven Meurer &bull; Leander</span></div><div class="branch-child"><span class="branch-child-name">Susan Wills</span><br><span class="branch-child-note">m. Joe &bull; Leander</span></div></div></div>
+    <div class="branch" style="border-left:4px solid var(--sky);"><div class="branch-header"><span class="branch-name">Doug (Joel Douglas) Bonnet</span><span class="living-badge">Living</span><span class="branch-spouse">&amp; Berneice (Smart)</span></div><div class="branch-children-grid"><div class="branch-child"><span class="branch-child-name">Gary Gene Bonnet</span><br><span class="branch-child-note">1951 &ndash; 2017 &bull; Bagdad Cemetery</span></div><div class="branch-child"><span class="branch-child-name">Doyle Wayne Bonnet</span><br><span class="branch-child-note">m. Cindy</span></div></div></div>
+    <div class="branch"><div class="branch-header"><span class="branch-name">Morris Bonnet</span><span class="branch-dates">b. 1937</span><span class="branch-spouse">&amp; Ida (Williams)</span></div><div class="branch-children-grid"><div class="branch-child" style="border-left:3px solid var(--live-oak);"><span class="branch-child-name">Tamara "Tammy" Bonnet Braun</span><br><span class="branch-child-note">1965 &ndash; 2023 &bull; Buried at Nameless</span><div style="margin-top:0.25rem;font-size:0.7rem;color:var(--patina);">m. Patrick Braun &bull; Children: Dani Sherek, Jordan Braun</div></div><div class="branch-child"><span class="branch-child-name">Blake Bonnet</span></div><div class="branch-child"><span class="branch-child-name">Dusty Bonnet</span><br><span class="branch-child-note">m. Lisa &bull; Hutto</span></div><div class="branch-child"><span class="branch-child-name">Rusty Bonnet</span><br><span class="branch-child-note">m. Theresa &bull; Hutto</span></div></div></div>
+    <div class="branch" style="border-left:4px solid var(--sky);"><div class="branch-header"><span class="branch-name">Lois Bonnet Tucker</span><span class="living-badge">Living</span><span class="branch-spouse">m. Winford Tucker (dec.)</span></div><div class="branch-note">Large family: many children, grandchildren, and great-grandchildren</div></div>
+    <div class="branch" style="border-left:4px solid var(--live-oak);"><div class="branch-header"><span class="branch-name">Doris Bonnet Reaves-Sullivan</span><span class="branch-dates">d. 2024</span><span class="buried-badge">Nameless</span></div><div class="branch-note">m. (1) Stephen Reaves (dec.), (2) Roy Sullivan (dec.)</div><div class="branch-children-grid"><div class="branch-child"><span class="branch-child-name">Stephen Reaves</span></div></div></div>
+    <div class="branch"><div class="branch-header"><span class="branch-name">Troy Bonnet</span><span class="branch-spouse">&amp; Carolyn</span></div><div class="branch-note">Georgetown, TX</div><div class="branch-children-grid"><div class="branch-child"><span class="branch-child-name">Cody Bonnet</span></div><div class="branch-child"><span class="branch-child-name">Alicia</span><br><span class="branch-child-note">Married (last name TBD)</span></div></div></div>
+    <div class="branch" style="border-left:4px solid var(--live-oak);"><div class="branch-header"><span class="branch-name">Glen Everett Bonnet</span><span class="branch-dates">1949 &ndash; 2021</span><span class="buried-badge">Nameless</span></div><div class="branch-note">Veteran &bull; Pastor &bull; Wife: Becky (Briggs), living</div><div class="branch-children-grid"><div class="branch-child"><span class="branch-child-name">Glen Jr. Bonnet</span></div><div class="branch-child"><span class="branch-child-name">David Bonnet</span></div><div class="branch-child"><span class="branch-child-name">Sharon Bonnet</span></div><div class="branch-child"><span class="branch-child-name">Nathan Bonnet</span></div></div></div>
+    <div class="branch" style="border-left:4px solid var(--sky);"><div class="branch-header"><span class="branch-name">Roger Doyle Bonnet</span><span class="branch-dates">b. 1952</span><span class="living-badge">Living</span></div><div class="branch-note">m. Patricia "Patty" White (b. 1954)</div><div class="branch-children-grid"><div class="branch-child" style="border-left:3px solid var(--sky);"><span class="branch-child-name">Travis Joseph Bonnet</span><br><span class="branch-child-note">b. 1979 &bull; Secretary, Nameless Cemetery Association</span><div style="margin-top:0.375rem;padding-top:0.375rem;border-top:1px solid var(--sandstone);font-size:0.75rem;color:var(--patina);">Trentin Bonnet (daughter Ellie)<br>Raven Bonnet (daughter Elena; one on the way)</div></div><div class="branch-child"><span class="branch-child-name">Kimberly Dawn Bonnet</span><br><span class="branch-child-note">b. 1982 &bull; m. Dan Scott</span><div style="margin-top:0.375rem;padding-top:0.375rem;border-top:1px solid var(--sandstone);font-size:0.75rem;color:var(--patina);">Samantha Scott<br>Abigail Scott<br>Wesley Cole Scott</div></div></div></div>
+  </div>
+</div>
+<div class="tree-footer">
+  <p>Source: Ancestry.com + Travis Bonnet family research. Work in progress.</p>
+  <p>Seven generations from Henry Daniel Bonnet to Ellie and Elena.</p>
+  <p style="margin-top:1rem;"><a href="/" style="color:var(--live-oak);">namelesscemetery.org</a></p>
+</div>
+<script>
+function showSide(side) {
+  document.getElementById('bonnet-side').style.display = side === 'bonnet' ? 'block' : 'none';
+  document.getElementById('whitt-side').style.display = side === 'whitt' ? 'block' : 'none';
+  document.querySelectorAll('.toggle-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.side === side);
+  });
+}
+</script>
+</body>
+</html>

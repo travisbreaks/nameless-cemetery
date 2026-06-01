@@ -1,0 +1,511 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import burials from '../data/burials.json'
+import plotData from '../data/plot-positions.json'
+
+const families = [...new Set(burials.map(b => b.family))].sort()
+const totalBurials = burials.length
+const unmarkedCount = 35
+---
+
+<BaseLayout
+  title="Burial Records & Map"
+  description="Search burial records and explore the interactive map of Nameless Cemetery in Travis County, Texas. 145 named burials and 35+ unmarked graves dating to 1882."
+>
+  <section class="page-header">
+    <div class="container--narrow">
+      <h1>Who's Buried Here</h1>
+      <p class="page-intro">
+        {totalBurials} named burials and an estimated {unmarkedCount}+ unmarked graves.
+        The earliest known burial dates to 1882. Search by name, tap a marker on the map,
+        or scroll the records below.
+      </p>
+    </div>
+  </section>
+
+  <section class="search-section">
+    <div class="container--narrow">
+      <div class="search-controls">
+        <div class="search-bar">
+          <input type="text" id="burial-search" placeholder="Search by name..." autocomplete="off" />
+          <span class="search-count" id="result-count">{totalBurials} records</span>
+        </div>
+        <div class="filter-row">
+          <select id="family-filter">
+            <option value="">All families</option>
+            {families.map(f => <option value={f}>{f}</option>)}
+          </select>
+          <label class="veteran-toggle">
+            <input type="checkbox" id="veteran-filter" />
+            Veterans only
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="map-section">
+    <div class="map-frame">
+      <div class="map-legend-bar">
+        <span class="legend-item"><span class="legend-dot legend-dot--burial"></span> Burial</span>
+        <span class="legend-item"><span class="legend-dot legend-dot--veteran"></span> Veteran</span>
+        <span class="legend-item"><span class="legend-dot legend-dot--infant"></span> Infant/child</span>
+        <span class="legend-item"><span class="legend-dot legend-dot--unmarked"></span> No headstone</span>
+      </div>
+      <div id="cemetery-map"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container--narrow">
+      <div class="list-controls" id="list-controls">
+        <button class="show-all-btn" id="show-all-btn">Show all {totalBurials} records</button>
+      </div>
+      <div class="burial-list collapsed" id="burial-list">
+        {burials.map(b => {
+          const birthYear = b.birth ? new Date(b.birth).getFullYear() : null
+          const deathYear = b.death ? new Date(b.death).getFullYear() : null
+          const lifespan = birthYear && deathYear
+            ? `${birthYear}\u2013${deathYear}`
+            : deathYear
+              ? `d. ${deathYear}`
+              : birthYear
+                ? `b. ${birthYear}`
+                : ''
+          return (
+            <article
+              class="burial-card"
+              id={`card-${b.id}`}
+              data-id={b.id}
+              data-name={b.name.toLowerCase()}
+              data-family={b.family}
+              data-veteran={b.veteran ? 'true' : 'false'}
+              data-reveal
+            >
+              <div class="burial-card-header">
+                <h2 class="burial-name">{b.name}</h2>
+                {lifespan && <span class="burial-dates">{lifespan}</span>}
+              </div>
+              <div class="burial-card-body">
+                {b.notes && <p class="burial-notes">{b.notes}</p>}
+                <div class="burial-meta">
+                  <span class="burial-family">{b.family} family</span>
+                  {b.veteran && <span class="burial-veteran">Veteran</span>}
+                  {!b.marker && <span class="burial-unmarked">No headstone</span>}
+                </div>
+                {b.findagrave && (
+                  <a href={b.findagrave} target="_blank" rel="noopener" class="burial-link">
+                    View on Find a Grave
+                  </a>
+                )}
+              </div>
+            </article>
+          )
+        })}
+      </div>
+
+      <div class="unmarked-notice" data-reveal>
+        <h3>Unmarked Graves</h3>
+        <p>
+          In addition to the {totalBurials} named burials above, there are an estimated
+          {unmarkedCount}+ unmarked graves at Nameless Cemetery. Some were noted in a 1970s survey,
+          others are marked only by field stones. If you have information about any unmarked
+          burial, please <a href="mailto:info@namelesscemetery.org?subject=Unmarked%20Grave%20Information">contact us</a>.
+        </p>
+      </div>
+
+      <div class="findagrave-cta" data-reveal>
+        <p>
+          See all memorials on <a href="https://www.findagrave.com/cemetery/3528/nameless-cemetery" target="_blank" rel="noopener">Find a Grave</a>.
+          If you have photos, corrections, or additions to these records, please
+          <a href="mailto:info@namelesscemetery.org?subject=Burial%20Record%20Update">let us know</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div id="burial-data" data-burials={JSON.stringify(burials)} data-plots={JSON.stringify(plotData.plots)} style="display:none;"></div>
+</BaseLayout>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<style>
+  .page-header {
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--sandstone);
+  }
+  .page-header h1 { margin-bottom: var(--space-md); }
+  .page-intro { font-size: var(--text-lg); color: var(--patina); line-height: 1.7; }
+
+  /* Search */
+  .search-section { background: var(--color-bg); border-bottom: 1px solid var(--sandstone); }
+  .search-controls { padding-block: var(--space-md); }
+  .search-bar { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-sm); }
+  #burial-search { flex: 1; padding: 0.65rem 1rem; font-size: var(--text-base); font-family: var(--font-body); border: 1px solid var(--sandstone); border-radius: 4px; background: var(--white); color: var(--iron); }
+  #burial-search:focus { outline: none; border-color: var(--live-oak); box-shadow: 0 0 0 2px rgba(75, 107, 65, 0.15); }
+  .search-count { font-size: var(--text-sm); color: var(--patina); white-space: nowrap; }
+  .filter-row { display: flex; align-items: center; gap: var(--space-lg); }
+  #family-filter { padding: 0.4rem 0.6rem; font-size: var(--text-sm); font-family: var(--font-body); border: 1px solid var(--sandstone); border-radius: 4px; background: var(--white); color: var(--iron); }
+  .veteran-toggle { font-size: var(--text-sm); color: var(--patina); display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+
+  /* Map */
+  .map-section { position: relative; z-index: 1; padding: var(--space-lg) var(--space-lg) 0; }
+  .map-frame { max-width: 800px; margin: 0 auto; border: 1px solid var(--sandstone); border-radius: 6px; overflow: hidden; background: var(--white); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); }
+  .map-legend-bar { display: flex; justify-content: center; gap: var(--space-md); padding: var(--space-sm) var(--space-lg); background: var(--white); border-bottom: 1px solid var(--sandstone); font-size: var(--text-xs); color: var(--patina); }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .legend-dot--burial { background: #4B6B41; }
+  .legend-dot--veteran { background: #2563EB; }
+  .legend-dot--infant { background: #C4956A; }
+  .legend-dot--unmarked { background: #8B7D6B; border: 1px dashed #5C524A; }
+  #cemetery-map { width: 100%; aspect-ratio: 1 / 1; max-height: 600px; min-height: 350px; background: #E8E0D4; }
+
+  /* List controls */
+  .list-controls { padding-top: var(--space-lg); text-align: center; }
+  .show-all-btn {
+    font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600;
+    color: var(--live-oak); background: var(--white); border: 1px solid var(--live-oak);
+    border-radius: 4px; padding: 0.6rem 1.5rem; cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .show-all-btn:hover { background: var(--live-oak); color: var(--white); }
+  .show-all-btn.hidden { display: none; }
+
+  /* Burial cards */
+  .burial-list { display: flex; flex-direction: column; gap: var(--space-sm); padding-top: var(--space-md); }
+  .burial-list.collapsed .burial-card { display: none; }
+  .burial-list.collapsed .burial-card.revealed { display: block; }
+  .burial-card {
+    padding: var(--space-md) var(--space-lg); border: 1px solid var(--sandstone); border-radius: 4px;
+    background: var(--white); cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.4s cubic-bezier(0.45, 0, 0.55, 1), transform 0.4s cubic-bezier(0.45, 0, 0.55, 1);
+  }
+  .burial-card.animate-in { animation: cardSlideIn 0.4s cubic-bezier(0.45, 0, 0.55, 1) forwards; }
+  @keyframes cardSlideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .burial-card:hover { border-color: var(--live-oak); }
+  .burial-card.active { border-color: var(--live-oak); box-shadow: 0 0 0 2px rgba(75, 107, 65, 0.2); }
+  .burial-card.hidden { display: none; }
+  .burial-card-header { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-md); flex-wrap: wrap; }
+  .burial-name { font-size: var(--text-base); font-family: var(--font-heading); margin: 0; color: var(--iron); }
+  .burial-dates { font-size: var(--text-sm); color: var(--patina); font-family: var(--font-heading); white-space: nowrap; }
+  .burial-card-body { margin-top: var(--space-xs); }
+  .burial-notes { font-size: var(--text-sm); color: var(--patina); margin: 0 0 var(--space-xs) 0; line-height: 1.5; }
+  .burial-meta { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+  .burial-family { font-size: var(--text-xs); color: var(--patina); background: var(--color-bg-alt); padding: 0.15rem 0.5rem; border-radius: 3px; }
+  .burial-veteran { font-size: var(--text-xs); color: var(--white); background: var(--live-oak); padding: 0.15rem 0.5rem; border-radius: 3px; font-weight: 600; }
+  .burial-unmarked { font-size: var(--text-xs); color: var(--rust); background: rgba(163, 88, 56, 0.1); padding: 0.15rem 0.5rem; border-radius: 3px; }
+  .burial-link { font-size: var(--text-xs); color: var(--live-oak); text-decoration: none; display: inline-block; margin-top: var(--space-xs); }
+  .burial-link:hover { color: var(--sky); }
+
+  .unmarked-notice { margin-top: var(--space-2xl); padding: var(--space-xl); background: rgba(163, 88, 56, 0.05); border: 1px solid rgba(163, 88, 56, 0.2); border-radius: 6px; }
+  .unmarked-notice h3 { font-size: var(--text-lg); margin-top: 0; margin-bottom: var(--space-sm); color: var(--rust); }
+  .unmarked-notice p { font-size: var(--text-base); color: var(--patina); margin: 0; line-height: 1.6; }
+  .findagrave-cta { margin-top: var(--space-xl); text-align: center; }
+  .findagrave-cta p { font-size: var(--text-sm); color: var(--patina); }
+
+  @media (max-width: 640px) {
+    .burial-card-header { flex-direction: column; gap: 0; }
+    .filter-row { flex-direction: column; align-items: flex-start; gap: var(--space-sm); }
+    .search-bar { flex-direction: column; align-items: stretch; }
+    .search-count { text-align: left; }
+    .map-section { padding: var(--space-md) var(--space-sm) 0; }
+    #cemetery-map { aspect-ratio: 1 / 1; min-height: 300px; max-height: none; }
+    .map-legend-bar { flex-wrap: wrap; gap: var(--space-sm); }
+  }
+</style>
+
+<script>
+  const searchInput = document.getElementById('burial-search') as HTMLInputElement
+  const familyFilter = document.getElementById('family-filter') as HTMLSelectElement
+  const veteranFilter = document.getElementById('veteran-filter') as HTMLInputElement
+  const resultCount = document.getElementById('result-count')!
+  const cards = document.querySelectorAll('.burial-card')
+  const burialList = document.getElementById('burial-list')!
+  const showAllBtn = document.getElementById('show-all-btn')!
+
+  let activeCardId: string | null = null
+  let listExpanded = false
+
+  // Show all button
+  showAllBtn.addEventListener('click', () => {
+    burialList.classList.remove('collapsed')
+    listExpanded = true
+    showAllBtn.classList.add('hidden')
+    // Stagger animate cards in
+    let delay = 0
+    cards.forEach(card => {
+      const el = card as HTMLElement
+      if (!el.classList.contains('hidden')) {
+        setTimeout(() => { el.classList.add('animate-in') }, delay)
+        delay += 15
+      }
+    })
+  })
+
+  function revealCard(id: string) {
+    const card = document.getElementById(`card-${id}`)
+    if (!card) return
+    card.classList.add('revealed', 'animate-in')
+  }
+
+  function isInfantOrChild(burial: any): boolean {
+    if (!burial.birth || !burial.death) return false
+    const age = (new Date(burial.death).getTime() - new Date(burial.birth).getTime()) / (365.25 * 86400000)
+    return age < 10
+  }
+
+  // ---- LEAFLET MAP ----
+  import('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js').then(() => {
+    const L = (window as any).L
+    const dataEl = document.getElementById('burial-data')!
+    const burials: any[] = JSON.parse(dataEl.dataset.burials || '[]')
+    const plots: Record<string, {x: number, y: number, section: string}> = JSON.parse(dataEl.dataset.plots || '{}')
+
+    // Map: X = west-east (gate on left), Y = north-south (north at top)
+    // Grid goes X: 0-180, Y: 0-186. Map pixels: wider than tall.
+    const mapW = 1800, mapH = 1860
+    const scaleX = mapW / 180, scaleY = mapH / 186
+
+    const map = L.map('cemetery-map', {
+      crs: L.CRS.Simple, minZoom: -2, maxZoom: 3, zoomSnap: 0.25, attributionControl: false,
+    })
+    // Leaflet CRS.Simple uses [y, x] where y increases upward.
+    // We invert Y so row 10 (north) is at top and row 186 (south) is at bottom.
+    const bounds: any = [[0, 0], [mapH, mapW]]
+    map.fitBounds(bounds)
+
+    // Cemetery outline
+    L.rectangle([[30, 30], [mapH - 30, mapW - 30]], {color: '#8B7D6B', weight: 2, fillColor: '#C5B9A8', fillOpacity: 0.3, dashArray: '6 4'}).addTo(map)
+
+    // Gate on WEST side (left), at approximately Y=65-70 (which in pixel coords = inverted)
+    const gatePixelY_north = (186 - 62) * scaleY
+    const gatePixelY_south = (186 - 72) * scaleY
+    const gateX = 30
+    L.polyline([[gatePixelY_north, gateX], [gatePixelY_north, gateX - 20]], {color: '#4B3621', weight: 4}).addTo(map)
+    L.polyline([[gatePixelY_south, gateX], [gatePixelY_south, gateX - 20]], {color: '#4B3621', weight: 4}).addTo(map)
+    L.marker([((gatePixelY_north + gatePixelY_south) / 2), gateX - 25], {icon: L.divIcon({className: 'map-label', html: '<span style="font-size:12px;color:#4B3621;font-weight:700;">GATE &#8592;</span>', iconAnchor: [25, 8]}), interactive: false}).addTo(map)
+
+    // Open Lane runs east-west at ~Y=70
+    const lanePixY = (186 - 70) * scaleY
+    L.polyline([[lanePixY, 40], [lanePixY, mapW - 40]], {color: '#A89888', weight: 1, dashArray: '8 6', opacity: 0.6}).addTo(map)
+    L.marker([lanePixY + 15, mapW / 2], {icon: L.divIcon({className: 'map-label', html: '<span style="font-size:10px;color:#A89888;font-style:italic;">Open Lane</span>', iconAnchor: [30, 5]}), interactive: false}).addTo(map)
+
+    // Manually placed family cluster labels (satellite + hand-drawn map verified)
+    const familyLabels = [
+      {label: 'Williamson', x: 8, y: 20},
+      {label: 'Williamson', x: 8, y: 140},
+      {label: 'Bolt', x: 22, y: 45},
+      {label: 'Ferril', x: 22, y: 22},
+      {label: 'Lohman', x: 44, y: 20},
+      {label: 'Hart', x: 88, y: 38},
+      {label: 'Johannessen', x: 96, y: 30},
+      {label: 'West', x: 116, y: 28},
+      {label: 'Maynard', x: 148, y: 30},
+      {label: 'Clawson', x: 130, y: 42},
+      {label: 'Briggs', x: 102, y: 62},
+      {label: 'Suhr', x: 118, y: 66},
+      {label: 'Sims', x: 152, y: 64},
+      {label: 'Pope', x: 96, y: 155},
+      {label: 'Bonnet', x: 128, y: 155},
+      {label: 'Pearson', x: 148, y: 150},
+      {label: 'Varner', x: 98, y: 145},
+      {label: 'Carlton', x: 98, y: 160},
+    ]
+    familyLabels.forEach(f => {
+      const px = f.x * scaleX
+      const py = (186 - f.y) * scaleY
+      L.marker([py, px], {
+        icon: L.divIcon({className: 'map-label', html: `<span style="font-size:9px;color:#6B5E50;font-weight:600;letter-spacing:0.05em;opacity:0.6;white-space:nowrap;font-style:italic;">${f.label}</span>`, iconAnchor: [f.label.length * 3, 12]}),
+        interactive: false,
+      }).addTo(map)
+    })
+
+    // Grid lines and coordinate labels
+    for (let i = 10; i <= 180; i += 10) {
+      // Vertical grid lines (columns, west-east)
+      const px = i * scaleX
+      L.polyline([[30, px], [mapH - 30, px]], {color: '#B8AFA4', weight: 0.5, opacity: 0.4}).addTo(map)
+      // Column label at top
+      L.marker([mapH - 15, px], {
+        icon: L.divIcon({className: 'map-label', html: `<span style="font-size:9px;color:#8B7D6B;font-weight:600;">${i}</span>`, iconAnchor: [6, 5]}),
+        interactive: false,
+      }).addTo(map)
+    }
+    for (let j = 10; j <= 180; j += 10) {
+      // Horizontal grid lines (rows, north-south)
+      const py = (186 - j) * scaleY
+      L.polyline([[py, 30], [py, mapW - 30]], {color: '#B8AFA4', weight: 0.5, opacity: 0.4}).addTo(map)
+      // Row label on left
+      L.marker([py, 12], {
+        icon: L.divIcon({className: 'map-label', html: `<span style="font-size:9px;color:#8B7D6B;font-weight:600;">${j}</span>`, iconAnchor: [6, 5]}),
+        interactive: false,
+      }).addTo(map)
+    }
+
+    // Compass (north is UP, top-right corner)
+    L.marker([mapH - 50, mapW - 60], {icon: L.divIcon({className: 'map-label', html: '<span style="font-size:14px;color:#4B3621;font-weight:700;">N &#8593;</span>', iconAnchor: [10, 10]}), interactive: false}).addTo(map)
+
+    // Section labels
+    const sectionLabels = [
+      {label: 'NW', pos: [(186 - 30) * scaleY, 30 * scaleX]},
+      {label: 'NE', pos: [(186 - 30) * scaleY, 130 * scaleX]},
+      {label: 'SW', pos: [(186 - 130) * scaleY, 20 * scaleX]},
+      {label: 'SE', pos: [(186 - 130) * scaleY, 130 * scaleX]},
+    ]
+    sectionLabels.forEach(s => {
+      L.marker(s.pos, {
+        icon: L.divIcon({className: 'map-label', html: `<span style="font-size:10px;color:#A89888;font-weight:600;letter-spacing:0.1em;opacity:0.4;">${s.label}</span>`, iconAnchor: [10, 6]}),
+        interactive: false,
+      }).addTo(map)
+    })
+
+    // Markers
+    const markers: any[] = []
+    const markerMap: Record<string, any> = {}
+
+    burials.forEach(burial => {
+      const pos = plots[burial.id]
+      if (!pos) return
+
+      // X maps directly (west=0 to east=180), Y is inverted (north=top in Leaflet)
+      const px = pos.x * scaleX, py = (186 - pos.y) * scaleY
+      const isVeteran = burial.veteran
+      const isInfant = isInfantOrChild(burial)
+      const noMarker = burial.marker === false
+      const color = isVeteran ? '#2563EB' : isInfant ? '#C4956A' : noMarker ? '#8B7D6B' : '#4B6B41'
+
+      const marker = L.circleMarker([py, px], {
+        radius: isInfant ? 4 : 6,
+        fillColor: color, fillOpacity: 0.85,
+        color: noMarker ? '#5C524A' : '#fff', weight: 1.5,
+        dashArray: noMarker ? '3 2' : undefined,
+        bubblingMouseEvents: false,
+      }).addTo(map)
+
+      const birthYr = burial.birth ? new Date(burial.birth).getFullYear() : null
+      const deathYr = burial.death ? new Date(burial.death).getFullYear() : null
+      const tipYears = birthYr && deathYr ? ` (${birthYr}\u2013${deathYr})` : deathYr ? ` (d. ${deathYr})` : ''
+      marker.bindTooltip(`${burial.name}${tipYears}`, {direction: 'top', offset: [0, -8], className: 'burial-tooltip'})
+
+      marker.on('click', () => {
+        highlightBurial(burial.id, 'map')
+      })
+
+      marker.burialData = burial
+      markers.push(marker)
+      markerMap[burial.id] = marker
+    })
+
+    // Shared highlight function
+    function highlightBurial(id: string, source: 'map' | 'card') {
+      // Reset all markers
+      markers.forEach(m => {
+        const inf = isInfantOrChild(m.burialData)
+        m.setRadius(inf ? 4 : 6)
+        m.setStyle({weight: 1.5, fillOpacity: 0.85})
+      })
+
+      // Reset all cards
+      cards.forEach(c => (c as HTMLElement).classList.remove('active'))
+      activeCardId = id
+
+      // Highlight marker
+      const marker = markerMap[id]
+      if (marker) {
+        marker.setRadius(12)
+        marker.setStyle({weight: 3})
+        if (source === 'card') {
+          map.setView(marker.getLatLng(), 1, {animate: true})
+        }
+      }
+
+      // Highlight card, reveal if collapsed, scroll to it
+      const card = document.getElementById(`card-${id}`)
+      if (card) {
+        card.classList.add('active')
+        if (!listExpanded) {
+          // In collapsed mode, reveal just this card
+          cards.forEach(c => (c as HTMLElement).classList.remove('revealed', 'animate-in'))
+          revealCard(id)
+        }
+        if (source === 'map') {
+          card.scrollIntoView({behavior: 'smooth', block: 'center'})
+        }
+      }
+    }
+
+    // Card click -> highlight on map
+    cards.forEach(card => {
+      card.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).tagName === 'A') return
+        const id = (card as HTMLElement).dataset.id
+        if (id) highlightBurial(id, 'card')
+      })
+    })
+
+    // Search syncs both map and list
+    function filterAll() {
+      const query = searchInput.value.toLowerCase().trim()
+      const family = familyFilter.value
+      const veteransOnly = veteranFilter.checked
+      let visible = 0
+      let firstMatch: any = null
+
+      // In collapsed mode, reveal matching cards on search; clear if empty
+      if (!listExpanded && !query && !family && !veteransOnly) {
+        cards.forEach(c => (c as HTMLElement).classList.remove('revealed', 'animate-in', 'hidden'))
+      }
+
+      let delay = 0
+      cards.forEach(card => {
+        const el = card as HTMLElement
+        const name = el.dataset.name || ''
+        const cardFamily = el.dataset.family || ''
+        const isVeteran = el.dataset.veteran === 'true'
+        const match = (!query || name.includes(query)) && (!family || cardFamily === family) && (!veteransOnly || isVeteran)
+
+        if (match) {
+          el.classList.remove('hidden')
+          visible++
+          if (!listExpanded && (query || family || veteransOnly)) {
+            el.classList.add('revealed')
+            setTimeout(() => el.classList.add('animate-in'), delay)
+            delay += 20
+          }
+        } else {
+          el.classList.add('hidden')
+          el.classList.remove('revealed', 'animate-in')
+        }
+      })
+
+      // Sync map markers
+      markers.forEach(m => {
+        const b = m.burialData
+        const name = b.name.toLowerCase()
+        const matchSearch = !query || name.includes(query)
+        const matchFamily = !family || b.family === family
+        const matchVeteran = !veteransOnly || b.veteran
+
+        if (matchSearch && matchFamily && matchVeteran) {
+          m.setStyle({fillOpacity: 0.85, opacity: 1})
+          m.setRadius(isInfantOrChild(b) ? 4 : 6)
+          if (!firstMatch) firstMatch = m
+        } else {
+          m.setStyle({fillOpacity: 0.1, opacity: 0.2})
+          m.setRadius(3)
+        }
+      })
+
+      if (firstMatch && query.length > 2) {
+        map.setView(firstMatch.getLatLng(), 1, {animate: true})
+      }
+
+      resultCount.textContent = `${visible} record${visible !== 1 ? 's' : ''}`
+    }
+
+    searchInput.addEventListener('input', filterAll)
+    familyFilter.addEventListener('change', filterAll)
+    veteranFilter.addEventListener('change', filterAll)
+  })
+</script>

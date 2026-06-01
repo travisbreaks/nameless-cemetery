@@ -1,0 +1,131 @@
+---
+interface Props {
+  compact?: boolean
+}
+
+const { compact = false } = Astro.props
+---
+
+<form action="/api/subscribe" method="POST" class:list={['signup-form', { 'signup-form--compact': compact }]}>
+  <div class="signup-fields">
+    <div class="signup-field signup-field--required">
+      <label for="signup-email">Email address <span class="required">*</span></label>
+      <input type="email" id="signup-email" name="email" required placeholder="your@email.com" />
+    </div>
+    {!compact && (
+      <div class="signup-field">
+        <label for="signup-name">Name <span class="optional">(optional)</span></label>
+        <input type="text" id="signup-name" name="name" placeholder="First and last name" />
+      </div>
+      <div class="signup-field">
+        <label for="signup-address">Mailing address <span class="optional">(optional)</span></label>
+        <input type="text" id="signup-address" name="address" placeholder="For postal updates" />
+      </div>
+      <div class="signup-field">
+        <label for="signup-phone">Phone <span class="optional">(optional)</span></label>
+        <input type="tel" id="signup-phone" name="phone" placeholder="555-0100" />
+      </div>
+    )}
+  </div>
+  <button type="submit" class="signup-btn">Join Our Mailing List</button>
+</form>
+
+<style>
+  .signup-form {
+    background: var(--white);
+    border: 1px solid var(--sandstone);
+    border-radius: 6px;
+    padding: var(--space-xl);
+  }
+
+  .signup-fields {
+    display: grid;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+
+  .signup-form--compact .signup-fields {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: 0;
+    align-items: end;
+  }
+
+  .signup-form--compact .signup-field--required {
+    flex: 1;
+  }
+
+  .signup-form--compact .signup-btn {
+    margin-top: 0;
+    white-space: nowrap;
+  }
+
+  .signup-field label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+    color: var(--bark);
+  }
+
+  .signup-field input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--sandstone);
+    border-radius: 4px;
+    font-size: var(--text-base);
+    font-family: var(--font-body);
+    color: var(--bark);
+    background: var(--limestone, #F5F0E8);
+    transition: border-color var(--duration) var(--ease);
+  }
+
+  .signup-field input:focus {
+    outline: none;
+    border-color: var(--live-oak);
+  }
+
+  .signup-field input::placeholder {
+    color: var(--patina);
+    opacity: 0.6;
+  }
+
+  .required {
+    color: var(--rust, #8B4513);
+  }
+
+  .optional {
+    font-weight: 400;
+    color: var(--patina);
+    font-size: var(--text-xs);
+  }
+
+  .signup-btn {
+    display: inline-block;
+    padding: 0.6rem 1.5rem;
+    background: var(--live-oak);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    font-size: var(--text-base);
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background var(--duration) var(--ease), transform var(--duration) var(--ease);
+  }
+
+  .signup-btn:hover {
+    background: var(--bark);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 640px) {
+    .signup-form--compact .signup-fields {
+      flex-direction: column;
+    }
+
+    .signup-form--compact .signup-btn {
+      width: 100%;
+    }
+  }
+</style>
