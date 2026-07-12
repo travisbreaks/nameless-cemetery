@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "astro build && wrangler pages deploy dist --project-name nameless-cemetery --branch main"
+    "deploy": "astro build && npx wrangler pages deploy dist --project-name nameless-cemetery --branch main"
   },
   "dependencies": {
     "astro": "^5.3.0",
