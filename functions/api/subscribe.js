@@ -41,6 +41,15 @@ export async function onRequestPost(context) {
 
   try {
     const formData = await context.request.formData()
+
+    // Honeypot: bots fill the hidden "website" field; humans never do. Silently drop (pretend success).
+    if (formData.get('website')) {
+      return Response.redirect(
+        new URL('/thank-you/', context.request.url).toString(),
+        303
+      )
+    }
+
     const email = formData.get('email')
     const name = formData.get('name') || ''
     const phone = formData.get('phone') || ''

@@ -7,6 +7,7 @@ const { compact = false } = Astro.props
 ---
 
 <form action="/api/subscribe" method="POST" class:list={['signup-form', { 'signup-form--compact': compact }]}>
+  <input type="text" name="website" class="signup-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
   <div class="signup-fields">
     <div class="signup-field signup-field--required">
       <label for="signup-email">Email address <span class="required">*</span></label>
@@ -36,6 +37,16 @@ const { compact = false } = Astro.props
     border: 1px solid var(--sandstone);
     border-radius: 6px;
     padding: var(--space-xl);
+  }
+
+  /* Honeypot: off-screen, hidden from humans + assistive tech; bots fill it and get dropped. */
+  .signup-hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .signup-fields {
