@@ -7,6 +7,9 @@ dist/
 # Astro generated
 .astro/
 
+# Wrangler / Cloudflare build cache
+.wrangler/
+
 # OS
 .DS_Store
 Thumbs.db
