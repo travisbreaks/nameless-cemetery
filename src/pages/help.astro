@@ -54,7 +54,13 @@ import BaseLayout from '../layouts/BaseLayout.astro'
         to help us preserve this old historic cemetery.
       </p>
       <p>
-        Donations can be made by check made out to Nameless Cemetery Assoc. and mailed to:
+        The association is a 501(c)(3) nonprofit, so your donation is tax-deductible.
+      </p>
+      <div class="help-donate-cta" data-reveal>
+        <a class="help-donate-btn" href="/donate/">Donate Online</a>
+      </div>
+      <p>
+        Donations can also be made by check made out to Nameless Cemetery Assoc. and mailed to:
       </p>
       <div class="donation-address">
         <p>
@@ -96,7 +102,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 
       <h2 data-reveal>Spread the Word</h2>
       <p>
-        Follow us on <a href="https://www.facebook.com/NamelessCemetery" target="_blank" rel="noopener">Facebook</a>
+        Follow us on <a href="https://www.facebook.com/people/Nameless-Cemetery/61579386000803/" target="_blank" rel="noopener">Facebook</a>
         and share our posts. If you know someone with family connections to Nameless Cemetery,
         point them our way. Many descendants don't know the association exists.
       </p>
@@ -123,7 +129,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
           <p>Treasurer &amp; Caretaker: Mark Manley</p>
         </div>
         <p>
-          <a href="https://www.facebook.com/NamelessCemetery" target="_blank" rel="noopener">facebook.com/NamelessCemetery</a>
+          <a href="https://www.facebook.com/people/Nameless-Cemetery/61579386000803/" target="_blank" rel="noopener">Nameless Cemetery on Facebook</a>
         </p>
         <p>
           <a href="https://www.findagrave.com/cemetery/3528/nameless-cemetery" target="_blank" rel="noopener">Find a Grave: Nameless Cemetery</a>
@@ -201,6 +207,34 @@ import BaseLayout from '../layouts/BaseLayout.astro'
     border-radius: 6px;
     padding: var(--space-lg);
     margin-block: var(--space-md);
+  }
+
+  .help-donate-cta {
+    margin-block: var(--space-lg) var(--space-xl);
+  }
+
+  .help-donate-btn {
+    display: inline-block;
+    background: var(--live-oak);
+    color: var(--white);
+    font-weight: 600;
+    text-decoration: none;
+    padding: var(--space-sm) var(--space-xl);
+    border-radius: 6px;
+    transition: opacity var(--duration) var(--ease);
+  }
+
+  .help-donate-btn:hover {
+    opacity: 0.9;
+    color: var(--white);
+  }
+
+  @media (max-width: 640px) {
+    .help-donate-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
   }
 
   .donation-address p {

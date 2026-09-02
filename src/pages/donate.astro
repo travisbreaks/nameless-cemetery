@@ -1,11 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import SignupForm from '../components/SignupForm.astro'
+
+// Public campaign page. Used as the href so the button still works if the
+// Zeffy popup script fails to load.
+const ZEFFY_FORM_URL = 'https://www.zeffy.com/en-US/donation-form/support-nameless-cemetery'
+// Modal version. The Zeffy script binds to zeffy-form-link and opens this in an overlay.
+const ZEFFY_MODAL_URL = 'https://www.zeffy.com/embed/donation-form/support-nameless-cemetery?modal=true'
 ---
 
 <BaseLayout
   title="Donate"
-  description="Support Nameless Cemetery Association. Help preserve a historic Texas cemetery in Travis County."
+  description="Support Nameless Cemetery Association, a 501(c)(3) nonprofit. Donations are tax-deductible and help preserve a historic Texas cemetery in Travis County."
 >
   <section class="page-header">
     <div class="container--narrow">
@@ -20,6 +26,43 @@ import SignupForm from '../components/SignupForm.astro'
   <section class="section">
     <div class="container--narrow">
 
+      <div class="tax-status" data-reveal>
+        <p>
+          The Nameless Cemetery Association is a <strong>501(c)(3) tax-exempt nonprofit
+          organization</strong> (EIN 80-0412719). Donations are tax-deductible to the
+          extent allowed by law.
+        </p>
+      </div>
+
+      <h2 data-reveal>Donate Online</h2>
+      <p>
+        Online donations are processed securely through Zeffy, a payment platform built
+        for nonprofits. Zeffy charges the association nothing, so 100% of your gift goes
+        to the cemetery. A tax receipt is emailed to you automatically.
+      </p>
+      <div class="donor-note" data-reveal>
+        <p>
+          <strong>One thing to know before you check out.</strong> Zeffy keeps its service
+          free by asking donors for a separate optional contribution to <em>Zeffy itself</em>,
+          and it suggests an amount automatically. That contribution is not part of your gift
+          to the cemetery, and it is entirely optional. To skip it, choose
+          <strong>&ldquo;Other&rdquo;</strong> in that dropdown and enter <strong>0</strong>.
+          Either way, the association receives your full donation.
+        </p>
+      </div>
+      <div class="donate-cta" data-reveal>
+        <a
+          class="donate-button"
+          data-donate-cta
+          href={ZEFFY_FORM_URL}
+          zeffy-form-link={ZEFFY_MODAL_URL}
+          target="_blank"
+          rel="noopener"
+        >
+          Donate Online
+        </a>
+      </div>
+
       <h2 data-reveal>Donate by Mail</h2>
       <p>
         Donations can be made by check, payable to <strong>Nameless Cemetery Assoc.</strong> and mailed to:
@@ -31,33 +74,33 @@ import SignupForm from '../components/SignupForm.astro'
           Leander, TX 78641
         </p>
       </div>
-      <p>
-        Donations help with mowing, grounds maintenance, tree work, fence repair, and
-        general upkeep. The association has no paid staff; every dollar goes directly
-        to preserving the cemetery.
-      </p>
 
-      <div class="online-coming-soon" data-reveal>
-        <h2>Online Donations</h2>
-        <p>
-          Online donation capability is coming soon. The association is currently pursuing
-          501(c)(3) tax-exempt status, which will allow us to accept tax-deductible
-          contributions online.
-        </p>
-        <p>
-          In the meantime, checks by mail are the best way to contribute.
-          Join our mailing list below to be notified when online donations become available.
-        </p>
-      </div>
+      <p>
+        Donations support the care of the cemetery as a whole: mowing, grounds
+        maintenance, tree work, fence repair, headstone care, and general upkeep.
+        The association has no paid staff; every dollar goes directly to preserving
+        the cemetery.
+      </p>
 
       <div class="signup-section" data-reveal>
         <h2>Stay Updated</h2>
-        <p>Get notified when online donations launch, plus cemetery events and news.</p>
+        <p>Join our mailing list for cemetery events and news.</p>
         <SignupForm />
       </div>
 
     </div>
   </section>
+  <!--
+    Zeffy popup script. The button keeps a real href so it still works if this
+    script fails to load. Zeffy's handler does not call preventDefault, so once
+    the script is confirmed loaded we cancel the default navigation ourselves,
+    otherwise a click would open the modal AND a new tab.
+  -->
+  <script
+    is:inline
+    src="https://zeffy-scripts.s3.ca-central-1.amazonaws.com/embed-form-script.min.js"
+    onload="document.querySelectorAll('[data-donate-cta]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();});});"
+  ></script>
 </BaseLayout>
 
 <style>
@@ -77,6 +120,67 @@ import SignupForm from '../components/SignupForm.astro'
     line-height: 1.7;
   }
 
+  .tax-status {
+    padding: var(--space-lg);
+    background: var(--limestone, #F5F0E8);
+    border-radius: 6px;
+    border-left: 4px solid var(--live-oak);
+    /* matches the h2 top margin so it clears the page-header rule like other pages */
+    margin-top: var(--space-3xl);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .tax-status p {
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .donor-note {
+    padding: var(--space-md) var(--space-lg);
+    background: var(--white);
+    border: 1px solid var(--sandstone);
+    border-radius: 6px;
+    margin-block: var(--space-md);
+  }
+
+  .donor-note p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--patina);
+  }
+
+  .donate-cta {
+    margin-block: var(--space-lg) var(--space-2xl);
+    text-align: center;
+  }
+
+  .donate-button {
+    display: inline-block;
+    background: var(--live-oak);
+    color: var(--white, #fff);
+    font-weight: 600;
+    font-size: var(--text-lg);
+    padding: var(--space-md) var(--space-2xl);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .donate-button:hover {
+    opacity: 0.9;
+  }
+
+  /* Mobile: make the primary CTA a full-width tap target */
+  @media (max-width: 640px) {
+    .donate-button {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding-inline: var(--space-md);
+    }
+  }
+
   .donation-address {
     background: var(--white);
     border: 1px solid var(--sandstone);
@@ -88,19 +192,6 @@ import SignupForm from '../components/SignupForm.astro'
   .donation-address p {
     margin: 0;
     line-height: 1.6;
-  }
-
-  .online-coming-soon {
-    margin-top: var(--space-2xl);
-    padding: var(--space-xl);
-    background: var(--limestone, #F5F0E8);
-    border-radius: 6px;
-    border-left: 4px solid var(--live-oak);
-  }
-
-  .online-coming-soon h2 {
-    margin-top: 0;
-    font-size: var(--text-xl);
   }
 
   .signup-section {

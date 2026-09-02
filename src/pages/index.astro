@@ -36,6 +36,19 @@ import SignupForm from '../components/SignupForm.astro'
     <div class="container--narrow" data-reveal>
       <p class="signup-cta-text">Stay connected with Nameless Cemetery events and news.</p>
       <SignupForm compact />
+
+      <div class="donate-nudge">
+        <a class="donate-nudge-btn" href="/donate/">Donate</a>
+        <a
+          class="nudge-social"
+          href="https://www.facebook.com/people/Nameless-Cemetery/61579386000803/"
+          target="_blank"
+          rel="noopener"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          Facebook
+        </a>
+      </div>
     </div>
   </section>
 
@@ -58,7 +71,7 @@ import SignupForm from '../components/SignupForm.astro'
         <a href="https://www.findagrave.com/cemetery/3528/nameless-cemetery" target="_blank" rel="noopener">Find a Grave</a>.
         The Nameless Cemetery Association was formed in 2009 to preserve, maintain, and
         honor this historic ground. Follow us on
-        <a href="https://www.facebook.com/NamelessCemetery" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.facebook.com/people/Nameless-Cemetery/61579386000803/" target="_blank" rel="noopener">Facebook</a>
         for updates.
       </p>
       <p>
@@ -124,8 +137,8 @@ import SignupForm from '../components/SignupForm.astro'
           <span class="event-day">3</span>
         </div>
         <div class="event-info">
-          <h3>Annual Meeting</h3>
-          <p>Saturday, October 3. Yearly gathering at the Nameless Schoolhouse.
+          <h3>Annual Meeting &amp; Work Day</h3>
+          <p>Saturday, October 3. Work day at 9:00 AM, business meeting at 11:00 AM.
           <a href="/events/">See details</a> or <a href="#signup">join our mailing list</a> for updates.</p>
         </div>
       </div>
@@ -187,7 +200,7 @@ import SignupForm from '../components/SignupForm.astro'
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M12 4v16"/><path d="M4 12h16"/><circle cx="12" cy="10" r="2"/></svg>
           Find a Grave
         </a>
-        <a href="https://www.facebook.com/NamelessCemetery" target="_blank" rel="noopener" class="connect-link">
+        <a href="https://www.facebook.com/people/Nameless-Cemetery/61579386000803/" target="_blank" rel="noopener" class="connect-link">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           Facebook
         </a>
@@ -489,6 +502,51 @@ import SignupForm from '../components/SignupForm.astro'
     color: var(--patina);
     margin-bottom: var(--space-md);
     text-align: center;
+  }
+
+  /* Secondary ask under the mailing-list form. Outlined rather than filled so
+     it supports the signup instead of competing with it or the header CTA. */
+  .donate-nudge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--sandstone);
+  }
+
+  .donate-nudge-btn {
+    display: inline-block;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--live-oak);
+    border: 2px solid var(--live-oak);
+    border-radius: 4px;
+    padding: var(--space-xs) var(--space-lg);
+    transition: background var(--duration) var(--ease), color var(--duration) var(--ease);
+  }
+
+  .donate-nudge-btn:hover {
+    background: var(--live-oak);
+    color: var(--white);
+  }
+
+  /* Secondary to the Donate button beside it: no border, just icon + label. */
+  .nudge-social {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--patina);
+    padding: var(--space-xs) var(--space-sm);
+    transition: color var(--duration) var(--ease);
+  }
+
+  .nudge-social:hover {
+    color: var(--live-oak);
   }
 
   .section-heading-link {

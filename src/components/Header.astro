@@ -7,7 +7,7 @@ const navItems = [
   { label: 'Events', href: '/events/' },
   { label: 'Stories', href: '/stories/' },
   { label: 'How to Help', href: '/help/' },
-  { label: 'Donate', href: '/donate/' },
+  { label: 'Donate', href: '/donate/', cta: true },
 ]
 ---
 
@@ -28,7 +28,7 @@ const navItems = [
       {navItems.map(item => (
         <a
           href={item.href}
-          class:list={['nav-link', { active: currentPath === item.href || currentPath === item.href.slice(0, -1) }]}
+          class:list={['nav-link', { 'nav-cta': item.cta, active: currentPath === item.href || currentPath === item.href.slice(0, -1) }]}
         >
           {item.label}
         </a>
@@ -132,6 +132,23 @@ const navItems = [
   .nav-link.active {
     color: var(--live-oak);
     border-bottom-color: var(--live-oak);
+  }
+
+  /* Donate reads as a button rather than another nav word, so the ask is
+     visible on every page without adding a second row of chrome. */
+  .nav-cta {
+    background: var(--live-oak);
+    color: var(--white);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: 4px;
+    border-bottom-color: transparent;
+  }
+
+  .nav-cta:hover,
+  .nav-cta.active {
+    color: var(--white);
+    background: var(--rust);
+    border-bottom-color: transparent;
   }
 
   .mobile-toggle {

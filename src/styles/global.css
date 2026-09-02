@@ -316,3 +316,33 @@ img {
     transition: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Zeffy donation modal sizing (desktop only)
+
+   Zeffy's embed script injects an unclassed <div> into <body> holding an
+   iframe, and inline-styles it to top:5% bottom:5% left:10% right:10%, which
+   is 80% of the viewport for a form that needs about 600px. We narrow it.
+
+   Targeted by the iframe's title because the wrapper has no class or id.
+   Inline styles from their script require !important to override. If Zeffy
+   changes that title the selector stops matching and we simply fall back to
+   their default sizing, which is ugly but not broken.
+
+   Mobile is left alone on purpose: below 769px their script goes fullscreen,
+   which is the right behavior on a phone.
+   --------------------------------------------------------------------------- */
+@media (min-width: 769px) {
+  body > div:has(> iframe[title="Form powered and secured by Zeffy"]) {
+    top: 50% !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: translate(-50%, -50%);
+    width: min(620px, 92vw) !important;
+    /* Sized to the amount step, which is what nearly everyone sees. Later
+       steps (donor details, card) are taller and scroll inside the iframe,
+       which is a better trade than a wall of empty green on first open. */
+    height: min(600px, 90vh) !important;
+  }
+}
