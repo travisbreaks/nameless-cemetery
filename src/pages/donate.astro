@@ -55,8 +55,7 @@ const ZEFFY_MODAL_URL = 'https://www.zeffy.com/embed/donation-form/support-namel
           class="donate-button"
           data-donate-cta
           href={ZEFFY_FORM_URL}
-          zeffy-form-link={ZEFFY_MODAL_URL}
-          target="_blank"
+          data-zeffy-modal={ZEFFY_MODAL_URL}
           rel="noopener"
         >
           Donate Online
@@ -91,15 +90,40 @@ const ZEFFY_MODAL_URL = 'https://www.zeffy.com/embed/donation-form/support-namel
     </div>
   </section>
   <!--
-    Zeffy popup script. The button keeps a real href so it still works if this
-    script fails to load. Zeffy's handler does not call preventDefault, so once
-    the script is confirmed loaded we cancel the default navigation ourselves,
-    otherwise a click would open the modal AND a new tab.
+    Donate button wiring. Must be is:inline and must stay ahead of the Zeffy
+    script: Zeffy does all of its work inside a DOMContentLoaded callback, and
+    it only binds to elements carrying a zeffy-form-link attribute. Astro would
+    otherwise bundle this as a deferred module and run it too late.
+
+    Phones never get the modal. Zeffy's overlay is just a fullscreen iframe on
+    small screens, which is what their own form page already is, so the modal
+    buys nothing and only adds a layer that can fail. Mobile navigates straight
+    to the campaign page in the same tab.
+
+    On desktop we cancel the navigation ourselves (Zeffy's handler does not),
+    but only after confirming at click time that their modal actually exists.
+    Cancelling unconditionally is what makes a dead button when their script
+    fails to load or runs late: nothing opens and the href never fires.
   -->
+  <script is:inline>
+    (function () {
+      var links = document.querySelectorAll('[data-donate-cta]')
+      if (!window.matchMedia('(min-width: 769px)').matches) return
+
+      links.forEach(function (a) {
+        a.setAttribute('zeffy-form-link', a.getAttribute('data-zeffy-modal'))
+        a.setAttribute('target', '_blank')
+        a.addEventListener('click', function (e) {
+          if (document.querySelector('iframe[title="Form powered and secured by Zeffy"]')) {
+            e.preventDefault()
+          }
+        })
+      })
+    })()
+  </script>
   <script
     is:inline
     src="https://zeffy-scripts.s3.ca-central-1.amazonaws.com/embed-form-script.min.js"
-    onload="document.querySelectorAll('[data-donate-cta]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();});});"
   ></script>
 </BaseLayout>
 

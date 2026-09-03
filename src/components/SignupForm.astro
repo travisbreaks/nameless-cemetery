@@ -133,6 +133,11 @@ const { compact = false } = Astro.props
   @media (max-width: 640px) {
     .signup-form--compact .signup-fields {
       flex-direction: column;
+      /* The row layout uses align-items:end to bottom-align the input and
+         button. Once this becomes a column that same value collapses children
+         to content width and right-aligns them, which cut the email field in
+         half on phones. Stretch restores full width. */
+      align-items: stretch;
     }
 
     .signup-form--compact .signup-btn {
