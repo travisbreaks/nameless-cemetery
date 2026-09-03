@@ -1,17 +1,18 @@
-// Simple IP-based rate limiting (10 signups per IP per hour)
-const rateLimitMap = new Map()
+// IP-based rate limiting (10 signups per IP per hour).
+// The counter has to live in KV, not in module scope. Pages Functions run in
+// isolates that are spun up and torn down constantly, spread across every edge
+// location, so a module-level Map is empty on most requests and the limit never
+// trips. It was written that way and did nothing until 2026-09-03.
 const RATE_LIMIT = 10
-const RATE_WINDOW_MS = 60 * 60 * 1000
+const RATE_WINDOW_SECONDS = 60 * 60
 
-function isRateLimited(ip) {
-  const now = Date.now()
-  const entry = rateLimitMap.get(ip)
-  if (!entry || now - entry.start > RATE_WINDOW_MS) {
-    rateLimitMap.set(ip, { start: now, count: 1 })
-    return false
-  }
-  entry.count++
-  return entry.count > RATE_LIMIT
+async function isRateLimited(kv, ip) {
+  if (!kv || ip === 'unknown') return false
+  const key = `ratelimit:${ip}`
+  const count = parseInt((await kv.get(key)) || '0', 10)
+  if (count >= RATE_LIMIT) return true
+  await kv.put(key, String(count + 1), { expirationTtl: RATE_WINDOW_SECONDS })
+  return false
 }
 
 export async function onRequestOptions() {
@@ -32,7 +33,7 @@ export async function onRequestPost(context) {
   }
 
   const clientIP = context.request.headers.get('CF-Connecting-IP') || 'unknown'
-  if (isRateLimited(clientIP)) {
+  if (await isRateLimited(context.env.SIGNUPS, clientIP)) {
     return new Response(JSON.stringify({ error: 'Too many requests' }), {
       status: 429,
       headers,
@@ -42,12 +43,39 @@ export async function onRequestPost(context) {
   try {
     const formData = await context.request.formData()
 
-    // Honeypot: bots fill the hidden "website" field; humans never do. Silently drop (pretend success).
-    if (formData.get('website')) {
-      return Response.redirect(
+    // Every rejection below returns the ordinary redirect so a bot cannot tell
+    // it was caught and start probing for what tripped it.
+    const dropSilently = () =>
+      Response.redirect(
         new URL('/thank-you/', context.request.url).toString(),
         303
       )
+
+    // Honeypot, checked two ways.
+    // Filled means a bot rendered the form and populated the hidden field, which
+    // no human ever does. MISSING means the request never went through our form
+    // at all: a script POSTing straight to this endpoint sends only the fields it
+    // knows about. That second case is what the late-August 2026 spam was doing
+    // (seven addresses, each submitted twice a few hundred milliseconds apart),
+    // and the original truthiness-only check let all of it through.
+    if (!formData.has('website') || formData.get('website')) {
+      return dropSilently()
+    }
+
+    // Only accept posts that came from the page itself. Compared against this
+    // request's own origin so production, preview deploys, and local dev all work
+    // without a hardcoded host. Checked leniently: some browsers and privacy
+    // tools strip these headers, and the honeypot above already covers a request
+    // with no form behind it, so only a header that is present AND wrong is
+    // rejected. Old browsers on this mailing list are not worth breaking.
+    const selfOrigin = new URL(context.request.url).origin
+    const origin = context.request.headers.get('Origin')
+    const referer = context.request.headers.get('Referer')
+    if (
+      (origin && origin !== selfOrigin) ||
+      (referer && !referer.startsWith(selfOrigin))
+    ) {
+      return dropSilently()
     }
 
     const email = formData.get('email')
