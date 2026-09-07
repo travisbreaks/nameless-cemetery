@@ -52,7 +52,7 @@ npm install
 npm run dev
 ```
 
-Dev server runs on `localhost:4321`.
+Dev server runs on `localhost:4325`.
 
 ## Deploy
 
@@ -65,7 +65,7 @@ npx wrangler pages deploy dist/ --project-name=nameless-cemetery --branch=main
 
 ## Credits
 
-Site created and maintained by [Travis Bonnet](https://github.com/travisbonnet) and [Claude](https://www.anthropic.com/claude).
+Site created and maintained by [Travis Bonnet](https://github.com/travisbreaks) and [Claude](https://www.anthropic.com/claude).
 
 Built for the Nameless Cemetery Association. Est. 2009. Earliest burial: 1882.
 
