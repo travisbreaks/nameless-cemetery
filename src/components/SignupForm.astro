@@ -4,14 +4,18 @@ interface Props {
 }
 
 const { compact = false } = Astro.props
+
+// The homepage renders this form twice (compact in the hero, full lower down).
+// Each instance needs its own id or the labels collide.
+const emailId = compact ? 'signup-compact-email' : 'signup-email'
 ---
 
 <form action="/api/subscribe" method="POST" class:list={['signup-form', { 'signup-form--compact': compact }]}>
   <input type="text" name="website" class="signup-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
   <div class="signup-fields">
     <div class="signup-field signup-field--required">
-      <label for="signup-email">Email address <span class="required">*</span></label>
-      <input type="email" id="signup-email" name="email" required placeholder="your@email.com" />
+      <label for={emailId}>Email address <span class="required">*</span></label>
+      <input type="email" id={emailId} name="email" required placeholder="your@email.com" />
     </div>
     {!compact && (
       <div class="signup-field">
@@ -28,6 +32,9 @@ const { compact = false } = Astro.props
       </div>
     )}
   </div>
+  <!-- Turnstile (managed, interaction-only): invisible unless Cloudflare needs
+       a click. Site key is public. The server checks the token in subscribe.js. -->
+  <div class="cf-turnstile" data-sitekey="0x4AAAAAAEvaP8H9i703RpWh" data-size="flexible" data-appearance="interaction-only" data-theme="light"></div>
   <button type="submit" class="signup-btn">Join Our Mailing List</button>
 </form>
 

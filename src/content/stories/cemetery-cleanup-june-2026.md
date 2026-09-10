@@ -58,3 +58,5 @@ If you would like to help with a future clean-up day, please keep an eye on our 
 Another great way to help is by engaging with our Facebook page. Like, share, subscribe, forward our posts, and invite others to follow along and join the mailing list. Every bit helps us reach more of the families connected to this place.
 
 Donations will also be an option soon. We are working to set up a donation portal and will share more once it is up and running.
+
+*Update, September 2026: the donation page is now live at [namelesscemetery.org/donate](/donate/).*

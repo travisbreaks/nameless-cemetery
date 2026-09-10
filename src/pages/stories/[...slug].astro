@@ -12,13 +12,18 @@ export async function getStaticPaths() {
 
 const { story } = Astro.props
 const { Content } = await render(story)
-const { title, date, author, category, description, images, comments, originalUrl } = story.data
+const { title, date, updated, author, category, description, images, comments, originalUrl } = story.data
 
-const formattedDate = date.toLocaleDateString('en-US', {
+// Frontmatter dates are calendar days parsed as UTC midnight. Format them in
+// UTC too, or a Central-time build renders every story a day early.
+const dateFormat = {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
-})
+  timeZone: 'UTC',
+} as const
+const formattedDate = date.toLocaleDateString('en-US', dateFormat)
+const formattedUpdated = updated?.toLocaleDateString('en-US', dateFormat)
 ---
 
 <BaseLayout
@@ -36,6 +41,9 @@ const formattedDate = date.toLocaleDateString('en-US', {
         <h1>{title}</h1>
         <div class="story-meta">
           <time datetime={date.toISOString()}>{formattedDate}</time>
+          {updated && formattedUpdated && (
+            <span> &middot; Updated <time datetime={updated.toISOString()}>{formattedUpdated}</time></span>
+          )}
           <span class="meta-sep">&middot;</span>
           <span>{author}</span>
         </div>
