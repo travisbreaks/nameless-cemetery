@@ -44,6 +44,7 @@ const stories = (await getCollection('stories')).sort(
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
+                  timeZone: 'UTC',
                 })}
               </time>
               {story.data.description && (

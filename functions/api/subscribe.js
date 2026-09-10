@@ -40,16 +40,15 @@ export async function onRequestPost(context) {
     })
   }
 
+  const redirectTo = (path) =>
+    Response.redirect(new URL(path, context.request.url).toString(), 303)
+
   try {
     const formData = await context.request.formData()
 
     // Every rejection below returns the ordinary redirect so a bot cannot tell
     // it was caught and start probing for what tripped it.
-    const dropSilently = () =>
-      Response.redirect(
-        new URL('/thank-you/', context.request.url).toString(),
-        303
-      )
+    const dropSilently = () => redirectTo('/thank-you/')
 
     // Honeypot, checked two ways.
     // Filled means a bot rendered the form and populated the hidden field, which
@@ -71,14 +70,50 @@ export async function onRequestPost(context) {
     const selfOrigin = new URL(context.request.url).origin
     const origin = context.request.headers.get('Origin')
     const referer = context.request.headers.get('Referer')
+    // Parse the Referer's origin exactly; a prefix match would let
+    // https://namelesscemetery.org.evil.example through.
+    let refererOrigin = null
+    if (referer) {
+      try {
+        refererOrigin = new URL(referer).origin
+      } catch {
+        return dropSilently()
+      }
+    }
     if (
       (origin && origin !== selfOrigin) ||
-      (referer && !referer.startsWith(selfOrigin))
+      (refererOrigin && refererOrigin !== selfOrigin)
     ) {
       return dropSilently()
     }
 
-    const email = formData.get('email')
+    // Turnstile. The widget puts a token in the form; Cloudflare confirms it.
+    // If the secret is not configured for this deployment (preview builds),
+    // log loudly and let the honeypot and origin checks stand on their own
+    // rather than turning away every human signup.
+    const turnstileSecret = context.env.TURNSTILE_SECRET_KEY
+    if (turnstileSecret) {
+      const token = formData.get('cf-turnstile-response')
+      if (!token) return dropSilently()
+      const verify = await fetch(
+        'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            secret: turnstileSecret,
+            response: token,
+            remoteip: clientIP,
+          }),
+        }
+      )
+      const outcome = await verify.json()
+      if (!outcome.success) return dropSilently()
+    } else {
+      console.error('TURNSTILE_SECRET_KEY not set; skipping Turnstile check')
+    }
+
+    const email = (formData.get('email') || '').trim().toLowerCase()
     const name = formData.get('name') || ''
     const phone = formData.get('phone') || ''
     const address = formData.get('address') || ''
@@ -93,60 +128,71 @@ export async function onRequestPost(context) {
     const timestamp = new Date().toISOString()
     const key = `signup:${timestamp}:${email}`
 
-    // Store in KV
-    if (context.env.SIGNUPS) {
-      await context.env.SIGNUPS.put(key, JSON.stringify({
-        email,
-        name,
-        phone,
-        address,
-        timestamp,
-        ip: clientIP,
-      }))
-    } else {
+    // Store in KV. Without the binding nothing is saved, so do not send the
+    // person to a page that says they were added.
+    if (!context.env.SIGNUPS) {
       console.error('SIGNUPS KV binding not available')
+      return redirectTo('/signup-problem/')
     }
+
+    // One address, one row. Keys are signup:<timestamp>:<email>, so an
+    // existing key ending in this address means they are already on file.
+    // Thank them the same way; there is nothing new to record.
+    const existing = await context.env.SIGNUPS.list({ prefix: 'signup:' })
+    if (existing.keys.some((k) => k.name.toLowerCase().endsWith(`:${email}`))) {
+      return redirectTo('/thank-you/')
+    }
+
+    await context.env.SIGNUPS.put(key, JSON.stringify({
+      email,
+      name,
+      phone,
+      address,
+      timestamp,
+      ip: clientIP,
+    }))
 
     // If Brevo is configured, also sync there
     const apiKey = context.env.BREVO_API_KEY
     const listId = parseInt(context.env.BREVO_LIST_ID, 10)
 
+    // The signup is already saved above. A Brevo failure must only log; it
+    // must not push a saved person to the problem page.
     if (apiKey && listId) {
-      const response = await fetch('https://api.brevo.com/v3/contacts', {
-        method: 'POST',
-        headers: {
-          'api-key': apiKey,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          attributes: {
-            FIRSTNAME: name,
-            PHONE: phone,
-            ADDRESS: address,
+      try {
+        const response = await fetch('https://api.brevo.com/v3/contacts', {
+          method: 'POST',
+          headers: {
+            'api-key': apiKey,
+            'Content-Type': 'application/json',
           },
-          listIds: [listId],
-          updateEnabled: true,
-        }),
-      })
+          body: JSON.stringify({
+            email,
+            attributes: {
+              FIRSTNAME: name,
+              PHONE: phone,
+              ADDRESS: address,
+            },
+            listIds: [listId],
+            updateEnabled: true,
+          }),
+        })
 
-      if (!response.ok && response.status !== 204) {
-        const errorData = await response.json()
-        if (errorData.code !== 'duplicate_parameter') {
-          console.error('Brevo API error:', JSON.stringify(errorData))
+        if (!response.ok && response.status !== 204) {
+          const errorData = await response.json()
+          if (errorData.code !== 'duplicate_parameter') {
+            console.error('Brevo API error:', JSON.stringify(errorData))
+          }
         }
+      } catch (brevoErr) {
+        console.error('Brevo sync failed:', brevoErr)
       }
     }
 
-    return Response.redirect(
-      new URL('/thank-you/', context.request.url).toString(),
-      303
-    )
+    return redirectTo('/thank-you/')
   } catch (err) {
+    // A thrown write means nothing was saved. Say so instead of thanking them.
     console.error('Subscribe error:', err)
-    return Response.redirect(
-      new URL('/thank-you/', context.request.url).toString(),
-      303
-    )
+    return redirectTo('/signup-problem/')
   }
 }

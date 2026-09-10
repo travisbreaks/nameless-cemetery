@@ -147,6 +147,10 @@ const articleJsonLd = ogType === 'article' && publishedDate ? {
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Cloudflare Turnstile for the signup form. Loaded once here rather than
+         in SignupForm because the homepage renders that component twice. -->
+    <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   </head>
   <body>
     <!-- Splash screen -->
@@ -247,10 +251,19 @@ const articleJsonLd = ogType === 'article' && publishedDate ? {
 
       // Internal nav sets a flag right before navigating.
       // If it's there, skip splash and clear it. Otherwise, play splash.
-      const skipSplash = sessionStorage.getItem('nc-skip-splash')
-      sessionStorage.removeItem('nc-skip-splash')
+      // sessionStorage throws in some private-browsing modes; an uncaught
+      // throw here would stop the script and leave the page blank.
+      let skipSplash: string | null = null
+      try {
+        skipSplash = sessionStorage.getItem('nc-skip-splash')
+        sessionStorage.removeItem('nc-skip-splash')
+      } catch {}
 
-      if (splash && content && header && !skipSplash) {
+      // Only the homepage plays the splash. A direct link to donate, an event
+      // or a burial (from Facebook, a text, a search) shows the page at once.
+      const isHome = window.location.pathname === '/'
+
+      if (splash && content && header && !skipSplash && isHome) {
         // Fresh load or refresh: play the full splash
         header.style.opacity = '0'
         header.style.transition = 'opacity 0.8s cubic-bezier(0.45, 0, 0.55, 1)'
@@ -277,7 +290,9 @@ const articleJsonLd = ogType === 'article' && publishedDate ? {
       // Flag internal link clicks so the next page skips splash
       document.querySelectorAll('a[href^="/"]').forEach((link) => {
         link.addEventListener('click', () => {
-          sessionStorage.setItem('nc-skip-splash', '1')
+          try {
+            sessionStorage.setItem('nc-skip-splash', '1')
+          } catch {}
         })
       })
 
