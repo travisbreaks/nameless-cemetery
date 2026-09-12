@@ -58,7 +58,7 @@ const cemeteryJsonLd = title === 'Home' ? {
   name: 'Nameless Cemetery',
   alternateName: 'Fairview Cemetery',
   url: 'https://namelesscemetery.org',
-  description: 'Historic Texas Cemetery in Travis County. Earliest burial 1882. Approximately 169 burials. Designated Historic Texas Cemetery in 2007.',
+  description: 'Historic Texas Cemetery in Travis County. Earliest burial 1882. 144 named burials and an estimated 35 or more unmarked graves. Designated Historic Texas Cemetery in 2007.',
   foundingDate: '1882',
   address: {
     '@type': 'PostalAddress',
@@ -151,6 +151,15 @@ const articleJsonLd = ogType === 'article' && publishedDate ? {
     <!-- Cloudflare Turnstile for the signup form. Loaded once here rather than
          in SignupForm because the homepage renders that component twice. -->
     <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+    <!-- Without scripts the splash never lifts and reveals never fire; show the page as-is -->
+    <noscript>
+      <style is:inline>
+        #splash { display: none !important; }
+        .page-content { opacity: 1 !important; }
+        [data-reveal], [data-reveal-stagger] > * { opacity: 1 !important; transform: none !important; }
+      </style>
+    </noscript>
   </head>
   <body>
     <!-- Splash screen -->

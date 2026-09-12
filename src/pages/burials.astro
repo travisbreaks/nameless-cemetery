@@ -6,11 +6,12 @@ import plotData from '../data/plot-positions.json'
 const families = [...new Set(burials.map(b => b.family))].sort()
 const totalBurials = burials.length
 const unmarkedCount = 35
+const unmappedCount = burials.filter(b => !(b.id in plotData.plots)).length
 ---
 
 <BaseLayout
   title="Burial Records & Map"
-  description="Search burial records and explore the interactive map of Nameless Cemetery in Travis County, Texas. 145 named burials and 35+ unmarked graves dating to 1882."
+  description={`Search burial records and explore the interactive map of Nameless Cemetery in Travis County, Texas. ${totalBurials} named burials and ${unmarkedCount}+ unmarked graves dating to 1882.`}
 >
   <section class="page-header">
     <div class="container--narrow">
@@ -27,17 +28,19 @@ const unmarkedCount = 35
     <div class="container--narrow">
       <div class="search-controls">
         <div class="search-bar">
+          <label for="burial-search" class="sr-only">Search burial records by name</label>
           <input type="text" id="burial-search" placeholder="Search by name..." autocomplete="off" />
           <span class="search-count" id="result-count">{totalBurials} records</span>
         </div>
         <div class="filter-row">
+          <label for="family-filter" class="sr-only">Filter by family</label>
           <select id="family-filter">
             <option value="">All families</option>
             {families.map(f => <option value={f}>{f}</option>)}
           </select>
           <label class="veteran-toggle">
             <input type="checkbox" id="veteran-filter" />
-            Veterans only
+            Documented veterans only
           </label>
         </div>
       </div>
@@ -53,6 +56,11 @@ const unmarkedCount = 35
         <span class="legend-item"><span class="legend-dot legend-dot--unmarked"></span> No headstone</span>
       </div>
       <div id="cemetery-map"></div>
+      <p class="map-caveat">
+        Positions are approximate. They come from a hand-drawn plot map and have not been
+        checked on the ground, so please do not use this map to locate a grave.
+        {unmappedCount} of the {totalBurials} records are not on the map yet.
+      </p>
     </div>
   </section>
 
@@ -80,6 +88,7 @@ const unmarkedCount = 35
               data-name={b.name.toLowerCase()}
               data-family={b.family}
               data-veteran={b.veteran ? 'true' : 'false'}
+              tabindex="0"
               data-reveal
             >
               <div class="burial-card-header">
@@ -129,6 +138,13 @@ const unmarkedCount = 35
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
+<noscript>
+  <style is:inline>
+    .burial-list.collapsed .burial-card { display: block !important; }
+    .list-controls { display: none !important; }
+  </style>
+</noscript>
+
 <style>
   .page-header {
     padding-top: var(--space-3xl);
@@ -160,6 +176,7 @@ const unmarkedCount = 35
   .legend-dot--infant { background: #C4956A; }
   .legend-dot--unmarked { background: #8B7D6B; border: 1px dashed #5C524A; }
   #cemetery-map { width: 100%; aspect-ratio: 1 / 1; max-height: 600px; min-height: 350px; background: #E8E0D4; }
+  .map-caveat { margin: 0; padding: var(--space-sm) var(--space-lg); font-size: var(--text-xs); color: var(--patina); background: var(--white); border-top: 1px solid var(--sandstone); line-height: 1.5; }
 
   /* List controls */
   .list-controls { padding-top: var(--space-lg); text-align: center; }
@@ -185,6 +202,7 @@ const unmarkedCount = 35
   @keyframes cardSlideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
   .burial-card:hover { border-color: var(--live-oak); }
   .burial-card.active { border-color: var(--live-oak); box-shadow: 0 0 0 2px rgba(75, 107, 65, 0.2); }
+  .burial-card:focus-visible { outline: 2px solid var(--live-oak); outline-offset: 2px; }
   .burial-card.hidden { display: none; }
   .burial-card-header { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-md); flex-wrap: wrap; }
   .burial-name { font-size: var(--text-base); font-family: var(--font-heading); margin: 0; color: var(--iron); }
@@ -255,9 +273,14 @@ const unmarkedCount = 35
     return age < 10
   }
 
+  // Map handles, filled in once Leaflet loads. Search, filters and the record
+  // list work without them, so a blocked map CDN costs the map, not the page.
+  let map: any = null
+  const markers: any[] = []
+  const markerMap: Record<string, any> = {}
+
   // ---- LEAFLET MAP ----
-  import('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js').then(() => {
-    const L = (window as any).L
+  function buildMap(L: any) {
     const dataEl = document.getElementById('burial-data')!
     const burials: any[] = JSON.parse(dataEl.dataset.burials || '[]')
     const plots: Record<string, {x: number, y: number, section: string}> = JSON.parse(dataEl.dataset.plots || '{}')
@@ -267,7 +290,7 @@ const unmarkedCount = 35
     const mapW = 1800, mapH = 1860
     const scaleX = mapW / 180, scaleY = mapH / 186
 
-    const map = L.map('cemetery-map', {
+    map = L.map('cemetery-map', {
       crs: L.CRS.Simple, minZoom: -2, maxZoom: 3, zoomSnap: 0.25, attributionControl: false,
     })
     // Leaflet CRS.Simple uses [y, x] where y increases upward.
@@ -361,9 +384,6 @@ const unmarkedCount = 35
     })
 
     // Markers
-    const markers: any[] = []
-    const markerMap: Record<string, any> = {}
-
     burials.forEach(burial => {
       const pos = plots[burial.id]
       if (!pos) return
@@ -396,116 +416,129 @@ const unmarkedCount = 35
       markers.push(marker)
       markerMap[burial.id] = marker
     })
+  }
 
-    // Shared highlight function
-    function highlightBurial(id: string, source: 'map' | 'card') {
-      // Reset all markers
-      markers.forEach(m => {
-        const inf = isInfantOrChild(m.burialData)
-        m.setRadius(inf ? 4 : 6)
-        m.setStyle({weight: 1.5, fillOpacity: 0.85})
-      })
-
-      // Reset all cards
-      cards.forEach(c => (c as HTMLElement).classList.remove('active'))
-      activeCardId = id
-
-      // Highlight marker
-      const marker = markerMap[id]
-      if (marker) {
-        marker.setRadius(12)
-        marker.setStyle({weight: 3})
-        if (source === 'card') {
-          map.setView(marker.getLatLng(), 1, {animate: true})
-        }
-      }
-
-      // Highlight card, reveal if collapsed, scroll to it
-      const card = document.getElementById(`card-${id}`)
-      if (card) {
-        card.classList.add('active')
-        if (!listExpanded) {
-          // In collapsed mode, reveal just this card
-          cards.forEach(c => (c as HTMLElement).classList.remove('revealed', 'animate-in'))
-          revealCard(id)
-        }
-        if (source === 'map') {
-          card.scrollIntoView({behavior: 'smooth', block: 'center'})
-        }
-      }
-    }
-
-    // Card click -> highlight on map
-    cards.forEach(card => {
-      card.addEventListener('click', (e) => {
-        if ((e.target as HTMLElement).tagName === 'A') return
-        const id = (card as HTMLElement).dataset.id
-        if (id) highlightBurial(id, 'card')
-      })
+  function highlightBurial(id: string, source: 'map' | 'card') {
+    // Reset all markers
+    markers.forEach(m => {
+      const inf = isInfantOrChild(m.burialData)
+      m.setRadius(inf ? 4 : 6)
+      m.setStyle({weight: 1.5, fillOpacity: 0.85})
     })
 
-    // Search syncs both map and list
-    function filterAll() {
-      const query = searchInput.value.toLowerCase().trim()
-      const family = familyFilter.value
-      const veteransOnly = veteranFilter.checked
-      let visible = 0
-      let firstMatch: any = null
+    // Reset all cards
+    cards.forEach(c => (c as HTMLElement).classList.remove('active'))
+    activeCardId = id
 
-      // In collapsed mode, reveal matching cards on search; clear if empty
-      if (!listExpanded && !query && !family && !veteransOnly) {
-        cards.forEach(c => (c as HTMLElement).classList.remove('revealed', 'animate-in', 'hidden'))
+    // Highlight marker
+    const marker = markerMap[id]
+    if (marker) {
+      marker.setRadius(12)
+      marker.setStyle({weight: 3})
+      if (source === 'card') {
+        map.setView(marker.getLatLng(), 1, {animate: true})
       }
-
-      let delay = 0
-      cards.forEach(card => {
-        const el = card as HTMLElement
-        const name = el.dataset.name || ''
-        const cardFamily = el.dataset.family || ''
-        const isVeteran = el.dataset.veteran === 'true'
-        const match = (!query || name.includes(query)) && (!family || cardFamily === family) && (!veteransOnly || isVeteran)
-
-        if (match) {
-          el.classList.remove('hidden')
-          visible++
-          if (!listExpanded && (query || family || veteransOnly)) {
-            el.classList.add('revealed')
-            setTimeout(() => el.classList.add('animate-in'), delay)
-            delay += 20
-          }
-        } else {
-          el.classList.add('hidden')
-          el.classList.remove('revealed', 'animate-in')
-        }
-      })
-
-      // Sync map markers
-      markers.forEach(m => {
-        const b = m.burialData
-        const name = b.name.toLowerCase()
-        const matchSearch = !query || name.includes(query)
-        const matchFamily = !family || b.family === family
-        const matchVeteran = !veteransOnly || b.veteran
-
-        if (matchSearch && matchFamily && matchVeteran) {
-          m.setStyle({fillOpacity: 0.85, opacity: 1})
-          m.setRadius(isInfantOrChild(b) ? 4 : 6)
-          if (!firstMatch) firstMatch = m
-        } else {
-          m.setStyle({fillOpacity: 0.1, opacity: 0.2})
-          m.setRadius(3)
-        }
-      })
-
-      if (firstMatch && query.length > 2) {
-        map.setView(firstMatch.getLatLng(), 1, {animate: true})
-      }
-
-      resultCount.textContent = `${visible} record${visible !== 1 ? 's' : ''}`
     }
 
-    searchInput.addEventListener('input', filterAll)
-    familyFilter.addEventListener('change', filterAll)
-    veteranFilter.addEventListener('change', filterAll)
+    // Highlight card, reveal if collapsed, scroll to it
+    const card = document.getElementById(`card-${id}`)
+    if (card) {
+      card.classList.add('active')
+      if (!listExpanded) {
+        // In collapsed mode, reveal just this card
+        cards.forEach(c => (c as HTMLElement).classList.remove('revealed', 'animate-in'))
+        revealCard(id)
+      }
+      if (source === 'map') {
+        card.scrollIntoView({behavior: 'smooth', block: 'center'})
+      }
+    }
+  }
+
+  // Card click or Enter/Space -> highlight on map
+  cards.forEach(card => {
+    card.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).tagName === 'A') return
+      const id = (card as HTMLElement).dataset.id
+      if (id) highlightBurial(id, 'card')
+    })
+    card.addEventListener('keydown', (e) => {
+      const key = (e as KeyboardEvent).key
+      if (key !== 'Enter' && key !== ' ') return
+      if ((e.target as HTMLElement).tagName === 'A') return
+      e.preventDefault()
+      const id = (card as HTMLElement).dataset.id
+      if (id) highlightBurial(id, 'card')
+    })
+  })
+
+  // Search syncs both map and list
+  function filterAll() {
+    const query = searchInput.value.toLowerCase().trim()
+    const family = familyFilter.value
+    const veteransOnly = veteranFilter.checked
+    let visible = 0
+    let firstMatch: any = null
+
+    // In collapsed mode, reveal matching cards on search; clear if empty
+    if (!listExpanded && !query && !family && !veteransOnly) {
+      cards.forEach(c => (c as HTMLElement).classList.remove('revealed', 'animate-in', 'hidden'))
+    }
+
+    let delay = 0
+    cards.forEach(card => {
+      const el = card as HTMLElement
+      const name = el.dataset.name || ''
+      const cardFamily = el.dataset.family || ''
+      const isVeteran = el.dataset.veteran === 'true'
+      const match = (!query || name.includes(query)) && (!family || cardFamily === family) && (!veteransOnly || isVeteran)
+
+      if (match) {
+        el.classList.remove('hidden')
+        visible++
+        if (!listExpanded && (query || family || veteransOnly)) {
+          el.classList.add('revealed')
+          setTimeout(() => el.classList.add('animate-in'), delay)
+          delay += 20
+        }
+      } else {
+        el.classList.add('hidden')
+        el.classList.remove('revealed', 'animate-in')
+      }
+    })
+
+    // Sync map markers
+    markers.forEach(m => {
+      const b = m.burialData
+      const name = b.name.toLowerCase()
+      const matchSearch = !query || name.includes(query)
+      const matchFamily = !family || b.family === family
+      const matchVeteran = !veteransOnly || b.veteran
+
+      if (matchSearch && matchFamily && matchVeteran) {
+        m.setStyle({fillOpacity: 0.85, opacity: 1})
+        m.setRadius(isInfantOrChild(b) ? 4 : 6)
+        if (!firstMatch) firstMatch = m
+      } else {
+        m.setStyle({fillOpacity: 0.1, opacity: 0.2})
+        m.setRadius(3)
+      }
+    })
+
+    if (firstMatch && query.length > 2) {
+      map.setView(firstMatch.getLatLng(), 1, {animate: true})
+    }
+
+    resultCount.textContent = `${visible} record${visible !== 1 ? 's' : ''}`
+  }
+
+  searchInput.addEventListener('input', filterAll)
+  familyFilter.addEventListener('change', filterAll)
+  veteranFilter.addEventListener('change', filterAll)
+
+  import('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js').then(() => {
+    buildMap((window as any).L)
+    // Catch up on anything typed or picked before the map finished loading
+    if (searchInput.value || familyFilter.value || veteranFilter.checked) filterAll()
   })
 </script>

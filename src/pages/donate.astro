@@ -20,6 +20,19 @@ const ZEFFY_MODAL_URL = 'https://www.zeffy.com/embed/donation-form/support-namel
         Nameless Cemetery is maintained entirely by volunteers and funded solely by donations.
         Every contribution helps preserve this historic ground for future generations.
       </p>
+      <!-- Early button so a phone visitor reaches the gift without scrolling past the details -->
+      <a
+        class="donate-button donate-button--early"
+        data-donate-cta
+        href={ZEFFY_FORM_URL}
+        data-zeffy-modal={ZEFFY_MODAL_URL}
+        rel="noopener"
+      >
+        Donate Online
+      </a>
+      <p class="early-note">
+        Zeffy asks for an optional tip to Zeffy itself. <a href="#donor-note">How to skip it</a>.
+      </p>
     </div>
   </section>
 
@@ -40,7 +53,7 @@ const ZEFFY_MODAL_URL = 'https://www.zeffy.com/embed/donation-form/support-namel
         for nonprofits. Zeffy charges the association nothing, so 100% of your gift goes
         to the cemetery. A tax receipt is emailed to you automatically.
       </p>
-      <div class="donor-note" data-reveal>
+      <div class="donor-note" id="donor-note" data-reveal>
         <p>
           <strong>One thing to know before you check out.</strong> Zeffy keeps its service
           free by asking donors for a separate optional contribution to <em>Zeffy itself</em>,
@@ -193,6 +206,16 @@ const ZEFFY_MODAL_URL = 'https://www.zeffy.com/embed/donation-form/support-namel
 
   .donate-button:hover {
     opacity: 0.9;
+  }
+
+  .donate-button--early {
+    margin-top: var(--space-lg);
+  }
+
+  .early-note {
+    margin: var(--space-sm) 0 0;
+    font-size: var(--text-sm);
+    color: var(--patina);
   }
 
   /* Mobile: make the primary CTA a full-width tap target */
