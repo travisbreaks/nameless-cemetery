@@ -22,7 +22,7 @@ In 1880, the local citizens had begun to call their settlement Fairview. They ap
 
 In 1970 the community of Nameless was awarded a Texas Historical Survey Marker that was erected on the school property.
 
-In 2009, the Nameless/Fairview Cemetery Association was formed to help preserve and upkeep the old cemetery. There are approximately 169 burials there with at least 35 of these unmarked. The earliest known grave site was in 1882.
+In 2009, the Nameless/Fairview Cemetery Association was formed to help preserve and upkeep the old cemetery. There are 144 named burials there, plus an estimated 35 or more unmarked graves. The earliest known grave site was in 1882.
 
 The association has an Annual Cemetery Meeting the first Saturday of every October and Clean-Up Days the last Saturday of March and September each year.
 
