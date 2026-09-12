@@ -9,7 +9,7 @@
   {"id": "bolt-randy-clay-sr", "name": "Bolt Sr., Randy Clay", "birth": "1964-03-24", "death": "1986-12-15", "notes": "Son of Judith & Joyce Bolt", "family": "Bolt", "marker": true},
   {"id": "bonnet-david-ezekiel", "name": "Bonnet, David Ezekiel", "birth": "1933-02-04", "death": "2022-01-18", "notes": "Son of E.J. & Katy Bonnet", "family": "Bonnet", "marker": true},
   {"id": "bonnet-ej-zeke", "name": "Bonnet, E.J. \"Zeke\"", "birth": "1907-09-07", "death": "1990-11-02", "notes": "Husband of Katy Whitt Bonnet", "family": "Bonnet", "marker": true, "findagrave": "https://www.findagrave.com/memorial/32133729"},
-  {"id": "bonnet-glen-everett", "name": "Bonnet, Glen Everett", "birth": "1949-08-30", "death": "2021-02-20", "notes": "Son of E.J. & Katy Bonnet. Veteran.", "family": "Bonnet", "marker": true},
+  {"id": "bonnet-glen-everett", "name": "Bonnet, Glen Everett", "birth": "1949-08-30", "death": "2021-02-20", "notes": "Son of E.J. & Katy Bonnet. Veteran.", "family": "Bonnet", "veteran": true, "marker": true},
   {"id": "bonnet-katy", "name": "Bonnet, Katy", "birth": "1909-05-16", "death": "1996-03-28", "notes": "Wife of E.J. Bonnet, nee Whitt", "family": "Bonnet", "marker": true, "findagrave": "https://www.findagrave.com/memorial/32133749"},
   {"id": "bonnet-merideth-ray", "name": "Bonnet, Merideth Ray", "birth": "1942-07-23", "death": "1943-08-23", "notes": "Son of E.J. & Katy Bonnet", "family": "Bonnet", "marker": true},
   {"id": "braun-tamara-j", "name": "Braun, Tamara J. Bonnet", "birth": "1965-01-06", "death": "2023-12-11", "notes": "Granddaughter of E.J. & Katy Bonnet", "family": "Bonnet", "marker": true},
