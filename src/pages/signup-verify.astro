@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout title="Please Try Again" noindex={true}>
+  <section class="page-header">
+    <div class="container--narrow">
+      <h1>Please Try Again</h1>
+      <p class="page-intro">
+        Your signup was not saved. The security check on the form did not go through,
+        which can happen if the page was open for a while. Please go back and submit
+        the form again. If it keeps happening, email
+        <a href="mailto:info@namelesscemetery.org">info@namelesscemetery.org</a>
+        and we will add you to the mailing list by hand.
+      </p>
+      <div class="back-links">
+        <a href="/">Back to Home</a>
+        <a href="/events/">See Upcoming Events</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-3xl);
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .page-header h1 {
+    margin-bottom: var(--space-md);
+  }
+
+  .page-intro {
+    font-size: var(--text-lg);
+    color: var(--patina);
+    line-height: 1.7;
+    margin-bottom: var(--space-xl);
+  }
+
+  .back-links {
+    display: flex;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+  }
+
+  .back-links a {
+    font-weight: 600;
+    color: var(--live-oak);
+  }
+</style>

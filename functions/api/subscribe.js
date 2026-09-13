@@ -33,17 +33,20 @@ export async function onRequestPost(context) {
   }
 
   const clientIP = context.request.headers.get('CF-Connecting-IP') || 'unknown'
-  if (await isRateLimited(context.env.SIGNUPS, clientIP)) {
-    return new Response(JSON.stringify({ error: 'Too many requests' }), {
-      status: 429,
-      headers,
-    })
-  }
 
   const redirectTo = (path) =>
     Response.redirect(new URL(path, context.request.url).toString(), 303)
 
   try {
+    // Inside the try: the counter is a KV read and write, and a KV failure here
+    // must land on the problem page, not escape as an unhandled error.
+    if (await isRateLimited(context.env.SIGNUPS, clientIP)) {
+      return new Response(JSON.stringify({ error: 'Too many requests' }), {
+        status: 429,
+        headers,
+      })
+    }
+
     const formData = await context.request.formData()
 
     // Every rejection below returns the ordinary redirect so a bot cannot tell
@@ -88,13 +91,14 @@ export async function onRequestPost(context) {
     }
 
     // Turnstile. The widget puts a token in the form; Cloudflare confirms it.
-    // If the secret is not configured for this deployment (preview builds),
-    // log loudly and let the honeypot and origin checks stand on their own
-    // rather than turning away every human signup.
+    // A missing or rejected token is not proof of a bot: tokens expire and can
+    // be used only once, so a person who left the page open can fail here. Tell
+    // them plainly and let them try again instead of thanking them for a signup
+    // that was never saved.
     const turnstileSecret = context.env.TURNSTILE_SECRET_KEY
     if (turnstileSecret) {
       const token = formData.get('cf-turnstile-response')
-      if (!token) return dropSilently()
+      if (!token) return redirectTo('/signup-verify/')
       const verify = await fetch(
         'https://challenges.cloudflare.com/turnstile/v0/siteverify',
         {
@@ -108,9 +112,15 @@ export async function onRequestPost(context) {
         }
       )
       const outcome = await verify.json()
-      if (!outcome.success) return dropSilently()
+      if (!outcome.success) return redirectTo('/signup-verify/')
+    } else if (context.env.TURNSTILE_BYPASS === 'true') {
+      // Explicit opt-out for local development only. Never set this in production.
+      console.warn('TURNSTILE_BYPASS is set; skipping Turnstile check')
     } else {
-      console.error('TURNSTILE_SECRET_KEY not set; skipping Turnstile check')
+      // No secret and no explicit bypass means a misconfigured deployment. Save
+      // nothing rather than take signups with the check silently switched off.
+      console.error('TURNSTILE_SECRET_KEY not set; refusing signup')
+      return redirectTo('/signup-problem/')
     }
 
     const email = (formData.get('email') || '').trim().toLowerCase()
@@ -191,7 +201,7 @@ export async function onRequestPost(context) {
 
     return redirectTo('/thank-you/')
   } catch (err) {
-    // A thrown write means nothing was saved. Say so instead of thanking them.
+    // A thrown read or write means nothing was saved. Say so instead of thanking them.
     console.error('Subscribe error:', err)
     return redirectTo('/signup-problem/')
   }
